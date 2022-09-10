@@ -41,7 +41,7 @@ states_map <- usmap::us_map()
 unique(states_map$abbr)
 
 # plot
-plot_usmap(data = R_2020, regions = "states", values = "R_votemargin_st") + 
+plot_usmap(data = R_2020, regions = "states", values = "R_votemargin_st", labels = TRUE) + 
   scale_fill_gradient(low = "white", high = "red", name = "GOP two-party voteshare margin") +
   labs(title = "GOP Vote Share by State in 2020") +
   theme_void()
