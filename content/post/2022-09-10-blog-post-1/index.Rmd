@@ -8,7 +8,6 @@ categories: []
 tags: []
 ---
 
-
 ```{r}
 library(readr)
 library(tidyverse)
@@ -47,7 +46,7 @@ plot_usmap(data = R_2020, regions = "states", values = "R_votemargin_st", labels
   theme_void()
 ```
 
-
+2. create a map of Republican/Democrat voteshare margin by state and congressional district in 2014
 ```{r}
 ## map across all election years
 # filter for relevant variables

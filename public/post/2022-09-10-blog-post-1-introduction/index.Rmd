@@ -1,0 +1,118 @@
+---
+title: 'Blog Post 1: Introduction'
+author: "Claire Duncan"
+date: "September 15, 2022"
+output: pdf_document
+categories: []
+tags: []
+summary: Hi! My name is Claire Duncan and I’m a junior studying government and psychology
+  at Harvard. From now until November 8, Election Day, I will be updating this blog
+  every week with a prediction model for the upcoming 2022 US midterm elections. This
+  week, the focus is on setting up the blog and creating visualizations of Democratic/Republican
+  vote share during previous election years.
+slug: []
+---
+
+**Blog Post 1: Introduction**
+
+*Map of Republican/Democrat vote-share margin by state, 2020 House Elections*
+Editing the code from our lab session, I created a map of the vote share margins by state in the 2020 House of Representatives election. The variable being visualized is the two-party vote share margin, calculated by finding the difference between the percentage of votes for Republican candidates and the percentage of votes for Democratic candidates within a given state. This represents the popular vote breakdown within states, not the winner of each Congressional district. In the map, a margin of 1 and a dark red color indicates 100% of the vote share went to Republicans. A margin of -1 and a dark blue color indicates 100% of the vote share went to Democrats. For context, in the 2020 House of Representatives election, Democrats won 222 seats and 50.8% of the popular vote, as compared to the Republicans victory of 213 seats and 47.7% vote share. 
+
+```{r, echo = FALSE}
+library(readr)
+library(tidyverse)
+library(ggplot2)
+library(sf)
+
+##make map of GOP vote share by state (national) - 2020
+
+house_party_vote_share_by_district_1948_2020 <- read_csv("house party vote share by district 1948-2020.csv")
+h <- house_party_vote_share_by_district_1948_2020
+
+
+#margin
+vote_2020 <- h %>%
+    filter(raceYear == 2020) %>%
+    select(raceYear, State, district_num, district_id, RepVotes, DemVotes) %>%
+  # summarize party vote share by state
+    group_by(State) %>%
+  # mutate Rep vote margin by state
+    mutate(R_votemargin_st = (sum(RepVotes))/
+                            sum(RepVotes + DemVotes),
+           D_votemargin_st = (sum(DemVotes))/
+                            sum(RepVotes + DemVotes),
+           vote_margin = R_votemargin_st - D_votemargin_st) %>%
+    rename(state = State)
+
+#load usmap
+library(usmap)
+
+states_map <- usmap::us_map()
+unique(states_map$abbr)
+
+#create plot
+plot_usmap(data = vote_2020, regions = "states", values = "vote_margin", labels = TRUE) + 
+  scale_fill_gradient2(low = "midnightblue", mid ="white", high = "firebrick", name = "Vote Share Margin", limits = c(-1,1)) +
+  labs(title = "Vote Share Margin by State in 2020", subtitle = "House of Representatives General Elections") +
+  theme_void()
+
+```
+The map shows more muted colors, indicating weaker margins of vote share across the US. This is indicative of the overall relatively 50/50 split in popular vote. Some states clearly lean more Democratic or Republican, such as California, Massachusetts, Wyoming, and Alabama.
+
+Interestingly, South Dakota indicates a vote share margin of 1.0 towards Republicans, meaning that Republicans won 100% of the popular vote. This appears to be an error in the data, simply given the incredibly low potential for that result. However, this is not an error. Ballotpedia (https://ballotpedia.org/United_States_House_of_Representatives_election_in_South_Dakota,_2022) notes that for the sole seat vacancy in the House for South Dakota in 2020, the Republican candidate received 81.0% of the vote, compared to the 19.0% for the Libertarian candidate. There were no Democratic candidates in the general race, with all 3 dropping out before the election.
+
+
+*Map of Republican/Democrat seat share margin by state, 2020 House Elections*
+
+Next, I created a map of the seat share margin for the 2020 House of Representatives. I calculated the margin as the percentage of seats Republicans won minus the percentage of seats Democrats won within a given state. I used the same color scale, with dark red indicating 100% of seats went to Republicans and dark blue indicating 100% of seats went to Democrats.
+
+```{r, echo = FALSE}
+#read in data from CQ Press; clean data
+seatshare <- read_csv(file = "export.csv", col_names = TRUE, skip = 2)
+
+seatshare <- seatshare %>% drop_na()
+
+seatshare <- seatshare[-c(52, 53), ]
+
+seatshare$Area <- as.character(seatshare$Area)
+seatshare$DemWinner <- as.numeric(seatshare$DemWinner)
+seatshare$RepWinner <- as.numeric(seatshare$RepWinner)
+
+#create margin variable
+seats_2020 <- seatshare %>%
+    select(Area, DemWinner, RepWinner) %>%
+    group_by(Area) %>%
+    mutate(R_seat_percent = (sum(RepWinner))/
+                            sum(RepWinner + DemWinner),
+           D_seat_percent = (sum(DemWinner))/
+                            sum(RepWinner + DemWinner),
+           seat_margin = R_seat_percent - D_seat_percent) %>%
+    rename(state = Area)
+
+library(usmap)
+
+states_map <- usmap::us_map()
+unique(states_map$abbr)
+
+#create plot
+plot_usmap(data = seats_2020, regions = "states", values = "seat_margin", labels = TRUE) + 
+  scale_fill_gradient2(low = "midnightblue", mid ="white", high = "firebrick", name = "Seat Share Margin", limits = c(-1,1)) +
+  labs(title = "Seat Share Margin by State in 2020", subtitle = "House of Representatives General Elections") +
+  theme_void()
+
+```
+In the seat share margin map, there are also some states that are colored white, indicating that the House seats up for election were split by Republican and Democrat candidates. This is evident in Minnesota, Michigan, and Pennsylvania, all states that are often considered to be swing states. These states were also colored white in the map of the 2020 House popular vote share margin, further cementing this designation as “battlegrounds” - the states have an almost 50/50 split of Democratic and Republican voters.
+
+To note, Arkansas is colored gray because there is no data for Arkansas from the dataset I downloaded. All 4 seats went to Republican candidates, so in the map, Arkansas should be colored in bright red. (https://ballotpedia.org/United_States_House_of_Representatives_elections_in_Arkansas,_2020)
+
+In the seat share map, there are much stronger, extreme margins as compared to the vote share map. This is most noticeable when considering Republican seat share, as multiple states across the south and west of the US only elected Republican candidates. This can be explained by the significant variation in vote share, especially given the number of individuals and amount of data available. This also may be an indication of gerrymandering and how political representation is not always proportional to the people within a state or district.
+
+
+*Conclusion*
+Overall, this data analysis and the maps I’ve made demonstrate the importance of considering the context behind the data as we analyze it. For the vote share margin map, without checking the results of the South Dakota election, I would have assumed that there was a problem with the data. It also emphasizes that just looking at the two-party split does not always give the entire picture of an election. Checking data sources is also key when considering the 2020 House seat share margin map in terms of the problem with the lack of Arkansas data.
+
+
+*Citation*
+House general elections, All States, 2020 summary. (2022). CQ voting and elections collection (web site). http://library.cqpress.com.ezp-prod1.hul.harvard.edu/elections/avg2020-3us1
+
+
