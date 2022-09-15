@@ -18,7 +18,7 @@ slug: []
 *Map of Republican/Democrat vote-share margin by state, 2020 House Elections*
 Editing the code from our lab session, I created a map of the vote share margins by state in the 2020 House of Representatives election. The variable being visualized is the two-party vote share margin, calculated by finding the difference between the percentage of votes for Republican candidates and the percentage of votes for Democratic candidates within a given state. This represents the popular vote breakdown within states, not the winner of each Congressional district. In the map, a margin of 1 and a dark red color indicates 100% of the vote share went to Republicans. A margin of -1 and a dark blue color indicates 100% of the vote share went to Democrats. For context, in the 2020 House of Representatives election, Democrats won 222 seats and 50.8% of the popular vote, as compared to the Republicans victory of 213 seats and 47.7% vote share. 
 
-```{r, echo = FALSE, show_col_types = FALSE}
+```{r, echo = FALSE, show_col_types = FALSE, message=FALSE, warning=FALSE, results = FALSE}
 library(readr)
 library(tidyverse)
 library(ggplot2)
@@ -66,7 +66,7 @@ Interestingly, South Dakota indicates a vote share margin of 1.0 towards Republi
 
 Next, I created a map of the seat share margin for the 2020 House of Representatives. I calculated the margin as the percentage of seats Republicans won minus the percentage of seats Democrats won within a given state. I used the same color scale, with dark red indicating 100% of seats went to Republicans and dark blue indicating 100% of seats went to Democrats.
 
-```{r, echo = FALSE, show_col_types = FALSE}
+```{r, echo = FALSE, show_col_types = FALSE, message=FALSE, warning=FALSE, results = FALSE}
 #read in data from CQ Press; clean data
 seatshare <- read_csv(file = "export.csv", col_names = TRUE, skip = 2)
 

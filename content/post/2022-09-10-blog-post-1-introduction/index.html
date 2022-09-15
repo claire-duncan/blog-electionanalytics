@@ -18,46 +18,11 @@ slug: []
 <p><strong>Blog Post 1: Introduction</strong></p>
 <p><em>Map of Republican/Democrat vote-share margin by state, 2020 House Elections</em>
 Editing the code from our lab session, I created a map of the vote share margins by state in the 2020 House of Representatives election. The variable being visualized is the two-party vote share margin, calculated by finding the difference between the percentage of votes for Republican candidates and the percentage of votes for Democratic candidates within a given state. This represents the popular vote breakdown within states, not the winner of each Congressional district. In the map, a margin of 1 and a dark red color indicates 100% of the vote share went to Republicans. A margin of -1 and a dark blue color indicates 100% of the vote share went to Democrats. For context, in the 2020 House of Representatives election, Democrats won 222 seats and 50.8% of the popular vote, as compared to the Republicans victory of 213 seats and 47.7% vote share.</p>
-<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
-<pre><code>## ✓ ggplot2 3.3.5     ✓ dplyr   1.0.7
-## ✓ tibble  3.1.4     ✓ stringr 1.4.0
-## ✓ tidyr   1.1.3     ✓ forcats 0.5.1
-## ✓ purrr   0.3.4</code></pre>
-<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()</code></pre>
-<pre><code>## Linking to GEOS 3.8.1, GDAL 3.2.1, PROJ 7.2.1</code></pre>
-<pre><code>## Rows: 16067 Columns: 31</code></pre>
-<pre><code>## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (17): Office, State, Area, RepCandidate, RepStatus, DemCandidate, DemSta...
-## dbl (13): raceYear, RepVotes, DemVotes, ThirdVotes, OtherVotes, PluralityVot...
-## lgl  (1): CensusPop</code></pre>
-<pre><code>## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre><code>## Warning: package &#39;usmap&#39; was built under R version 4.1.2</code></pre>
-<pre><code>##  [1] &quot;AL&quot; &quot;AK&quot; &quot;AZ&quot; &quot;AR&quot; &quot;CA&quot; &quot;CO&quot; &quot;CT&quot; &quot;DE&quot; &quot;DC&quot; &quot;FL&quot; &quot;GA&quot; &quot;HI&quot; &quot;ID&quot; &quot;IL&quot; &quot;IN&quot;
-## [16] &quot;IA&quot; &quot;KS&quot; &quot;KY&quot; &quot;LA&quot; &quot;ME&quot; &quot;MD&quot; &quot;MA&quot; &quot;MI&quot; &quot;MN&quot; &quot;MS&quot; &quot;MO&quot; &quot;MT&quot; &quot;NE&quot; &quot;NV&quot; &quot;NH&quot;
-## [31] &quot;NJ&quot; &quot;NM&quot; &quot;NY&quot; &quot;NC&quot; &quot;ND&quot; &quot;OH&quot; &quot;OK&quot; &quot;OR&quot; &quot;PA&quot; &quot;RI&quot; &quot;SC&quot; &quot;SD&quot; &quot;TN&quot; &quot;TX&quot; &quot;UT&quot;
-## [46] &quot;VT&quot; &quot;VA&quot; &quot;WA&quot; &quot;WV&quot; &quot;WI&quot; &quot;WY&quot;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-1-1.png" width="672" />
 The map shows more muted colors, indicating weaker margins of vote share across the US. This is indicative of the overall relatively 50/50 split in popular vote. Some states clearly lean more Democratic or Republican, such as California, Massachusetts, Wyoming, and Alabama.</p>
 <p>Interestingly, South Dakota indicates a vote share margin of 1.0 towards Republicans, meaning that Republicans won 100% of the popular vote. This appears to be an error in the data, simply given the incredibly low potential for that result. However, this is not an error. Ballotpedia (<a href="https://ballotpedia.org/United_States_House_of_Representatives_election_in_South_Dakota,_2022" class="uri">https://ballotpedia.org/United_States_House_of_Representatives_election_in_South_Dakota,_2022</a>) notes that for the sole seat vacancy in the House for South Dakota in 2020, the Republican candidate received 81.0% of the vote, compared to the 19.0% for the Libertarian candidate. There were no Democratic candidates in the general race, with all 3 dropping out before the election.</p>
 <p><em>Map of Republican/Democrat seat share margin by state, 2020 House Elections</em></p>
 <p>Next, I created a map of the seat share margin for the 2020 House of Representatives. I calculated the margin as the percentage of seats Republicans won minus the percentage of seats Democrats won within a given state. I used the same color scale, with dark red indicating 100% of seats went to Republicans and dark blue indicating 100% of seats went to Democrats.</p>
-<pre><code>## Rows: 57 Columns: 14</code></pre>
-<pre><code>## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (14): Office, RaceDate, CensusPop, Area, RepWinner, DemWinner, OtherWinn...</code></pre>
-<pre><code>## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre><code>## Warning: One or more parsing issues, see `problems()` for details</code></pre>
-<pre><code>##  [1] &quot;AL&quot; &quot;AK&quot; &quot;AZ&quot; &quot;AR&quot; &quot;CA&quot; &quot;CO&quot; &quot;CT&quot; &quot;DE&quot; &quot;DC&quot; &quot;FL&quot; &quot;GA&quot; &quot;HI&quot; &quot;ID&quot; &quot;IL&quot; &quot;IN&quot;
-## [16] &quot;IA&quot; &quot;KS&quot; &quot;KY&quot; &quot;LA&quot; &quot;ME&quot; &quot;MD&quot; &quot;MA&quot; &quot;MI&quot; &quot;MN&quot; &quot;MS&quot; &quot;MO&quot; &quot;MT&quot; &quot;NE&quot; &quot;NV&quot; &quot;NH&quot;
-## [31] &quot;NJ&quot; &quot;NM&quot; &quot;NY&quot; &quot;NC&quot; &quot;ND&quot; &quot;OH&quot; &quot;OK&quot; &quot;OR&quot; &quot;PA&quot; &quot;RI&quot; &quot;SC&quot; &quot;SD&quot; &quot;TN&quot; &quot;TX&quot; &quot;UT&quot;
-## [46] &quot;VT&quot; &quot;VA&quot; &quot;WA&quot; &quot;WV&quot; &quot;WI&quot; &quot;WY&quot;</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" />
 In the seat share margin map, there are also some states that are colored white, indicating that the House seats up for election were split by Republican and Democrat candidates. This is evident in Minnesota, Michigan, and Pennsylvania, all states that are often considered to be swing states. These states were also colored white in the map of the 2020 House popular vote share margin, further cementing this designation as “battlegrounds” - the states have an almost 50/50 split of Democratic and Republican voters.</p>
 <p>To note, Arkansas is colored gray because there is no data for Arkansas from the dataset I downloaded. All 4 seats went to Republican candidates, so in the map, Arkansas should be colored in bright red. (<a href="https://ballotpedia.org/United_States_House_of_Representatives_elections_in_Arkansas,_2020" class="uri">https://ballotpedia.org/United_States_House_of_Representatives_elections_in_Arkansas,_2020</a>)</p>
