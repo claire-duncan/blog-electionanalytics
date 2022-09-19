@@ -20,10 +20,12 @@ My primary goal was to see which measurement of unemployment served as a better 
 require(tidyverse)
 require(ggplot2)
 library(readr)
+library(stargazer)
+
 ```
 
 
-```{r, message = FALSE, include = FALSE, show_col_types = FALSE, echo=FALSE}
+```{r, message = FALSE, include = FALSE, show_col_types = FALSE, echo = FALSE}
 popvote_df <- read_csv('house_popvote_seats.csv') 
 economy_df <- read_csv('GDP_quarterly.csv')
 
@@ -42,7 +44,7 @@ data2 <- data1 %>%
 ```
 
 
-```{r, message = FALSE, include = FALSE, echo=FALSE, show_col_types = FALSE}
+```{r, message = FALSE, include = FALSE, echo = FALSE, show_col_types = FALSE}
 
 unemployment <- read.csv('unemployment_state_monthly.csv')
 
@@ -73,13 +75,14 @@ dataOCT2 <- dataOCT %>%
 
 First, I looked at the unemployment rate only from October of the midterm election year and found a positive but weak relationship. The correlation coefficient between the two variables is 0.05. The linear regression model is y = 0.082x + 50.858, indicating that an increase in 1% unemployment results in an increase in 0.08% vote share for the Democrats in the midterm House election. While this does support Wright (2012), my analysis was not statistically significant, and the R^2 was 0.00122, indicating that this can only explain 0.122% of the variability in the prediction.
 
-# October data
-```{r, message = FALSE, echo=FALSE}
+*October data*
+```{r, message = FALSE, warning = FALSE, echo=FALSE}
 cor(dataOCT2$percent, dataOCT2$D_majorvote_pct)
 
 lm_unemploy <- lm(D_majorvote_pct ~ percent, 
               data = dataOCT2)
-summary(lm_unemploy)
+#summary(lm_unemploy)
+stargazer(lm_unemploy, type = 'text')
 
 
 dataOCT2%>%
@@ -91,27 +94,16 @@ dataOCT2%>%
     xlab("Unemployment Percentage in October of Midterm Year") +
     ylab("Democratic Party Popular Vote") +
     theme_bw() +
-    labs(title = "October Unemployment Percentage and Democratic Vote Share in House Elections", subtitle = "midterm years between 1978-2018")
-
+    labs(title = "October Unemployment Percentage and Democratic Vote Share, House Elections", subtitle = "midterm years between 1978-2018")
 
 ```
 To further test Wright (2012)’s theory in relation to the Congressional midterms, I analyzed the relationship between Democratic vote share and unemployment rate when Republicans were the incumbent party. However, my analysis fails to provide support for Wright (2012)’s claims. During years in which the incumbent party was Republican, there is a weak, negative relationship between unemployment rate and Democratic vote share. The correlation coefficient is -0.5408313 and the linear regression model is y = -1.467x + 58.606, indicating an increase in 1% unemployment is associated with a decrease in Democratic vote share by 1.467%. This is statistically significant and the R^2 is 0.288, indicating this can explain 28.8% of the variability in the prediction model.
 
-# Democrat Incumbent
-```{r, message = FALSE, echo=FALSE}
-dataDEM2 <- dataOCT2 %>%
-  filter(H_incumbent_party == "D")
-
-cor(dataDEM2$percent, dataDEM2$D_majorvote_pct)
+Despite this, when the Democrats are the incumbents, they still see a positive relationship between vote share and unemployment rate, indicating their voters do not seem to punish them for rising unemployment. The correlation coefficient is 0.193 and the linear regression model is y = 0.30391x + 49.147, indicating an increase in 1% in unemployment rate is associated with an increase in Democratic vote share by 3.03%. While this is statistically significant, it only accounts for 3.53% of the variation in the model.
 
 
-lm_unemployDEMAUG <- lm(D_majorvote_pct ~ percent, 
-              data = dataDEM2)
-summary(lm_unemployDEMAUG)
-```
-
-# Republican Incumbent
-```{r, message = FALSE, echo=FALSE}
+*Republican Incumbent*
+```{r, message = FALSE, warning = FALSE, echo=FALSE}
 dataDEM <- dataOCT2 %>%
   filter(H_incumbent_party == "R")
 
@@ -120,17 +112,32 @@ cor(dataDEM$percent, dataDEM$D_majorvote_pct)
 
 lm_unemployGOPAUG <- lm(D_majorvote_pct ~ percent, 
               data = dataDEM)
-summary(lm_unemployGOPAUG)
+#summary(lm_unemployGOPAUG)
+stargazer(lm_unemployGOPAUG, type = 'text')
 
 ```
 
-Despite this, when the Democrats are the incumbents, they still see a positive relationship between vote share and unemployment rate, indicating their voters do not seem to punish them for rising unemployment. The correlation coefficient is 0.193 and the linear regression model is y = 0.30391x + 49.147, indicating an increase in 1% in unemployment rate is associated with an increase in Democratic vote share by 3.03%. While this is statistically significant, it only accounts for 3.53% of the variation in the model.
+
+*Democrat Incumbent*
+```{r, message = FALSE, echo=FALSE, warning = FALSE}
+dataDEM2 <- dataOCT2 %>%
+  filter(H_incumbent_party == "D")
+
+cor(dataDEM2$percent, dataDEM2$D_majorvote_pct)
+
+
+lm_unemployDEMAUG <- lm(D_majorvote_pct ~ percent, 
+              data = dataDEM2)
+#summary(lm_unemployDEMAUG)
+stargazer(lm_unemployDEMAUG, type = 'text')
+```
+
 
 
 Next, I analyzed Wright (2012)’s second measurement of unemployment, subtracting the unemployment rate in January of the election year from the rate in October of that same year.
 
 
-# January - October data
+*January - October data*
 ```{r, include = FALSE, echo=FALSE}
 unemploymentTIME <- unemploymentYEAR %>%
   group_by(state, year) %>%
@@ -146,14 +153,16 @@ dataTIME2 <- dataTIME %>%
 
 I found a positive but slightly weak relationship between unemployment rate and Democratic vote share. The correlation coefficient between the two variables is 0.357. The linear regression model is y = 1.402x + 51.289, indicating that an increase in 1% unemployment from January to October of the election year results in an increase in 1.402% vote share for the Democrats in the House election. This difference is statistically significant. The R^2 is 0.127, indicating that this explains 12.7% of the variability in the prediction. Comparing this model to the one that analyzed only data from October, the measured change in unemployment rate holds a stronger relationship with Democratic vote share.
 
-# Democratic vote share
-```{r, message = FALSE, echo=FALSE}
+*Democratic vote share*
+```{r, message = FALSE, echo=FALSE, warning = FALSE}
 
 cor(dataTIME2$percent_change, dataTIME2$D_majorvote_pct)
 
 lm_unemploy <- lm(D_majorvote_pct ~ percent_change, 
               data = dataTIME2)
-summary(lm_unemploy)
+#summary(lm_unemploy)
+stargazer(lm_unemploy, type = 'text')
+
 
 
 dataTIME2%>%
@@ -171,8 +180,8 @@ dataTIME2%>%
 
 Subsetting to only include cases of Democratic incumbency, I found that the correlation was 0.097, with the model y=0.16x + 50.109. An increase from January to October of 1% in the unemployment rate was associated with an increase in Democratic vote share of 1.6%, though this was not as statistically significant as the last relationship, and only accounted for 0.85% of the variability.
 
-# Democrat Incumbent
-```{r, message = FALSE, echo=FALSE}
+*Democrat Incumbent*
+```{r, message = FALSE, warning = FALSE, echo = FALSE}
 dataDEMTIME <- dataTIME2 %>%
   filter(H_incumbent_party == "D")
 
@@ -181,7 +190,9 @@ cor(dataDEMTIME$percent, dataDEMTIME$D_majorvote_pct)
 
 lm_unemployDEMTIME <- lm(D_majorvote_pct ~ percent, 
               data = dataDEMTIME)
-summary(lm_unemployDEMTIME)
+#summary(lm_unemployDEMTIME)
+stargazer(lm_unemployDEMTIME, type = 'text')
+
 
 ```
 
@@ -191,7 +202,7 @@ In my prediction, the data I am using is from August of this year seeing as it i
 
 The model predicts that this year, based on August’s unemployment rates, Democrats would win 50.16% of the vote share in the House elections.
 
-# Model with October data, Democrat Incumbent
+*Model with October data, Democrat incumbent*
 ```{r, message = FALSE, show_col_types = FALSE, echo=FALSE}
 unemployment22 <- read_csv("unemployment22.csv")
 mean(unemployment22$change)
@@ -207,7 +218,7 @@ mean(model22)
 
 Meanwhile, just for comparison’s sake, the model for change in unemployment rate predicts that Democrats will win 50.01% of the vote share. There is no strong difference in the two prediction models.
 
-# Model with January - October, Democrat Incumbent
+*Model with January - October data, Democrat incumbent*
 ```{r, message = FALSE, echo=FALSE}
 unemployTIME <- unemployment22 %>%
   select('state', 'change') %>%
