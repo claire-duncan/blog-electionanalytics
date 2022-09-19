@@ -230,3 +230,6 @@ mean(model22)
 ```
 
 From January to August in 2022, unemployment in the US has decreased by an average rate of 0.632%, potentially indicating that Democrats will have the ability to win the popular two-party vote margin, given the above models and voters’ perceptions of politicians’ ability to fix unemployment. With people, on average, “better off” than they were earlier in the year, this may mean they’ll re-elect Democratic candidates. However, it is still early out from the election in terms of unemployment measurements, so that will be something to watch for over the next month.
+
+
+References: John R Wright. Unemployment and the democratic electoral advantage. American Political Science Review, 106(4):685–702, 2012. ISSN 0003-0554.
