@@ -5,7 +5,17 @@
     <link>http://example.org/</link>
     <description>Recent content on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Thu, 15 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog Post 2: Economic Forces</title>
+      <link>http://example.org/post/2022-09-15-blog-post-2-economic-forces/</link>
+      <pubDate>Thu, 15 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/2022-09-15-blog-post-2-economic-forces/</guid>
+      <description>In week two of Election Analytics, we focused on economic forces and the effect of various measures of economic well-being at the ballot box. Do voters punish candidates when the economy is doing poorly? Do they focus on only the short-term effects or the long-term changes over time?</description>
+    </item>
+    
     <item>
       <title>Blog Post 1: Introduction</title>
       <link>http://example.org/post/2022-09-10-blog-post-1-introduction/</link>

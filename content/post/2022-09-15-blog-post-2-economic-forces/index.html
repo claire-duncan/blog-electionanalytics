@@ -1,0 +1,52 @@
+---
+title: 'Blog Post 2: Economic Forces'
+author: "Claire Duncan"
+date: '2022-09-15'
+output: pdf_document
+slug: []
+categories: []
+tags: []
+summary: In week two of Election Analytics, we focused on economic forces and the effect of various measures of economic well-being at the ballot box. Do voters punish candidates when the economy is doing poorly? Do they focus on only the short-term effects or the long-term changes over time? 
+
+---
+
+
+
+<p>Wright (2012) analyzed the effect of unemployment rate on the Democratic two-party vote share in Presidential and Governor elections. Given the upcoming midterms, I wanted to study how the unemployment rate impacts Congressional races.
+I used the same measurements as Wright (2012): one as unemployment rate in the county in October of the election year, and the other as change in unemployment rate from January to October of the election year. The data set I used was 1976-2018 and included incumbency, Democratic and Republican vote share, all at the state level. I joined this with another data set of the unemployment rate which was given by state and month, from 1978-2018. I subset the combined data to midterm election years.</p>
+<p>My primary goal was to see which measurement of unemployment served as a better model for predicting Democratic vote share. Secondarily, I wanted to see how my results compared to that of Wright (2012), in which they found that higher unemployment actually increases the vote shares of Democratic candidates.</p>
+<div id="year-of-midterm-race-only-for-october" class="section level2">
+<h2>year of midterm race, ONLY FOR OCTOBER</h2>
+<p>First, I looked at the unemployment rate only from October of the midterm election year and found a positive but weak relationship. The correlation coefficient between the two variables is 0.05. The linear regression model is y = 0.082x + 50.858, indicating that an increase in 1% unemployment results in an increase in 0.08% vote share for the Democrats in the midterm House election. While this does support Wright (2012), my analysis was not statistically significant, and the R^2 was 0.00122, indicating that this can only explain 0.122% of the variability in the prediction.</p>
+</div>
+<div id="oct" class="section level2">
+<h2>OCT</h2>
+<p>To further test Wright (2012)’s theory in relation to the Congressional midterms, I analyzed the relationship between Democratic vote share and unemployment rate when Republicans were the incumbent party. However, my analysis fails to provide support for Wright (2012)’s claims. During years in which the incumbent party was Republican, there is a weak, negative relationship between unemployment rate and Democratic vote share. The correlation coefficient is -0.5408313 and the linear regression model is y = -1.467x + 58.606, indicating an increase in 1% unemployment is associated with a decrease in Democratic vote share by 1.467%. This is statistically significant and the R^2 is 0.288, indicating this can explain 28.8% of the variability in the prediction model.</p>
+</div>
+<div id="oct-only-d-incumbent" class="section level2">
+<h2>OCT ONLY, D INCUMBENT</h2>
+</div>
+<div id="oct-only-r-incumbent" class="section level2">
+<h2>OCT ONLY, R INCUMBENT</h2>
+<p>Despite this, when the Democrats are the incumbents, they still see a positive relationship between vote share and unemployment rate, indicating their voters do not seem to punish them for rising unemployment. The correlation coefficient is 0.193 and the linear regression model is y = 0.30391x + 49.147, indicating an increase in 1% in unemployment rate is associated with an increase in Democratic vote share by 3.03%. While this is statistically significant, it only accounts for 3.53% of the variation in the model.</p>
+<p>Next, I analyzed Wright (2012)’s second measurement of unemployment, subtracting the unemployment rate in January of the election year from the rate in October of that same year.</p>
+</div>
+<div id="jan---oct-dem" class="section level2">
+<h2>jan - oct, DEM</h2>
+<p>I found a positive but slightly weak relationship between unemployment rate and Democratic vote share. The correlation coefficient between the two variables is 0.357. The linear regression model is y = 1.402x + 51.289, indicating that an increase in 1% unemployment from January to October of the election year results in an increase in 1.402% vote share for the Democrats in the House election. This difference is statistically significant. The R^2 is 0.127, indicating that this explains 12.7% of the variability in the prediction. Comparing this model to the one that analyzed only data from October, the measured change in unemployment rate holds a stronger relationship with Democratic vote share.</p>
+<p>Subsetting to only include cases of Democratic incumbency, I found that the correlation was 0.097, with the model y=0.16x + 50.109. An increase from January to October of 1% in the unemployment rate was associated with an increase in Democratic vote share of 1.6%, though this was not as statistically significant as the last relationship, and only accounted for 0.85% of the variability.</p>
+</div>
+<div id="jan---oct-d-incumbent" class="section level2">
+<h2>jan - oct , D INCUMBENT</h2>
+<p>Comparing the two models that both served to include Democratic incumbency, considering that is the case this year, I decided that the one that measured unemployment rate only by the month of October serves as a better predictor, despite also being weak overall. To model the data and predict for the 2022 midterms, I took the average of the prediction across all 50 states based on current rates of unemployment.</p>
+<p>In my prediction, the data I am using is from August of this year seeing as it is only mid-September, making the analysis impossible to replicate precisely in order to predict the Democratic vote share of the 2022 midterms. Leaving out 2 months of data and time for the unemployment to potentially fluctuate or change, I understand the potential for misrepresentation and the potential errors in my prediction.</p>
+<p>The model predicts that this year, based on August’s unemployment rates, Democrats would win 50.16% of the vote share in the House elections.</p>
+</div>
+<div id="model-for-oct-only-d-incumbent" class="section level2">
+<h2>MODEL FOR OCT ONLY, D INCUMBENT</h2>
+<p>Meanwhile, just for comparison’s sake, the model for change in unemployment rate predicts that Democrats will win 50.01% of the vote share. There is no strong difference in the two prediction models.</p>
+</div>
+<div id="model-for-jan-oct-d-incumbent" class="section level2">
+<h2>MODEL FOR JAN-OCT, D INCUMBENT</h2>
+<p>From January to August in 2022, unemployment in the US has decreased by an average rate of 0.632%, potentially indicating that Democrats will have the ability to win the popular two-party vote margin, given the above models and voters’ perceptions of politicians’ ability to fix unemployment. With people, on average, “better off” than they were earlier in the year, this may mean they’ll re-elect Democratic candidates. However, it is still early out from the election in terms of unemployment measurements, so that will be something to watch for over the next month.</p>
+</div>
