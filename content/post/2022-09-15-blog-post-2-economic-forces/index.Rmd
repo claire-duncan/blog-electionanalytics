@@ -42,7 +42,8 @@ data2 <- data1 %>%
 ```
 
 
-```{r, message = FALSE, include = FALSE, echo=FALSE}
+```{r, message = FALSE, include = FALSE, echo=FALSE, show_col_types = FALSE}
+
 unemployment <- read.csv('unemployment_state_monthly.csv')
 
 unemployment2 <- unemployment %>%
@@ -58,7 +59,7 @@ unemploymentYEAR <- unemployment2 %>%
 ```
 
 
-```{r, message = FALSE, echo=FALSE}
+```{r, include = FALSE, message = FALSE, echo=FALSE}
 unemploymentOCT <- unemploymentYEAR %>%
   group_by(state, year) %>%
   rename(percent = Unemployed_prct) %>%
@@ -72,7 +73,7 @@ dataOCT2 <- dataOCT %>%
 
 First, I looked at the unemployment rate only from October of the midterm election year and found a positive but weak relationship. The correlation coefficient between the two variables is 0.05. The linear regression model is y = 0.082x + 50.858, indicating that an increase in 1% unemployment results in an increase in 0.08% vote share for the Democrats in the midterm House election. While this does support Wright (2012), my analysis was not statistically significant, and the R^2 was 0.00122, indicating that this can only explain 0.122% of the variability in the prediction.
 
-## October data
+# October data
 ```{r, message = FALSE, echo=FALSE}
 cor(dataOCT2$percent, dataOCT2$D_majorvote_pct)
 
@@ -110,7 +111,7 @@ summary(lm_unemployDEMAUG)
 ```
 
 # Republican Incumbent
-```{r, include = FALSE, echo=FALSE}
+```{r, message = FALSE, echo=FALSE}
 dataDEM <- dataOCT2 %>%
   filter(H_incumbent_party == "R")
 
@@ -129,7 +130,7 @@ Despite this, when the Democrats are the incumbents, they still see a positive r
 Next, I analyzed Wright (2012)’s second measurement of unemployment, subtracting the unemployment rate in January of the election year from the rate in October of that same year.
 
 
-## January - October data
+# January - October data
 ```{r, include = FALSE, echo=FALSE}
 unemploymentTIME <- unemploymentYEAR %>%
   group_by(state, year) %>%

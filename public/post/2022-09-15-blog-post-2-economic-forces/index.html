@@ -67,35 +67,10 @@
 <p>Wright (2012) analyzed the effect of unemployment rate on the Democratic two-party vote share in Presidential and Governor elections. Given the upcoming midterms, I wanted to study how the unemployment rate impacts Congressional races.
 I used the same measurements as Wright (2012): one as unemployment rate in the county in October of the election year, and the other as change in unemployment rate from January to October of the election year. The data set I used was 1976-2018 and included incumbency, Democratic and Republican vote share, all at the state level. I joined this with another data set of the unemployment rate which was given by state and month, from 1978-2018. I subset the combined data to midterm election years.</p>
 <p>My primary goal was to see which measurement of unemployment served as a better model for predicting Democratic vote share. Secondarily, I wanted to see how my results compared to that of Wright (2012), in which they found that higher unemployment actually increases the vote shares of Democratic candidates.</p>
-<pre class="r"><code>unemployment &lt;- read.csv(&#39;unemployment_state_monthly.csv&#39;)
-
-unemployment2 &lt;- unemployment %&gt;%
-  select(&#39;State.and.area&#39;, &#39;Year&#39;, &#39;Month&#39;, &#39;Unemployed_prct&#39;) %&gt;%
-  rename(state = State.and.area, year = Year)
-  
-unemployment2$Month &lt;- as.numeric(unemployment2$Month)
-unemployment2$year &lt;- as.numeric(unemployment2$year)
-
-unemploymentYEAR &lt;- unemployment2 %&gt;%
-  filter(year == 1978 | year == 1982 | year == 1986 | year == 1980 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018)</code></pre>
-<pre class="r"><code>unemploymentOCT &lt;- unemploymentYEAR %&gt;%
-  group_by(state, year) %&gt;%
-  rename(percent = Unemployed_prct) %&gt;%
-  filter(Month == 10)
-
-dataOCT &lt;- left_join(data2, unemploymentOCT, by = &#39;year&#39;)
-
-dataOCT2 &lt;- dataOCT %&gt;%
-  drop_na()</code></pre>
 <p>First, I looked at the unemployment rate only from October of the midterm election year and found a positive but weak relationship. The correlation coefficient between the two variables is 0.05. The linear regression model is y = 0.082x + 50.858, indicating that an increase in 1% unemployment results in an increase in 0.08% vote share for the Democrats in the midterm House election. While this does support Wright (2012), my analysis was not statistically significant, and the R^2 was 0.00122, indicating that this can only explain 0.122% of the variability in the prediction.</p>
-<div id="october-data" class="section level2">
-<h2>October data</h2>
-<pre class="r"><code>#dem corr
-cor(dataOCT2$percent, dataOCT2$D_majorvote_pct)</code></pre>
+<div id="october-data" class="section level1">
+<h1>October data</h1>
 <pre><code>## [1] 0.05283837</code></pre>
-<pre class="r"><code>lm_unemploy &lt;- lm(D_majorvote_pct ~ percent, 
-              data = dataOCT2)
-summary(lm_unemploy)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = D_majorvote_pct ~ percent, data = dataOCT2)
@@ -114,29 +89,12 @@ summary(lm_unemploy)</code></pre>
 ## Residual standard error: 3.599 on 634 degrees of freedom
 ## Multiple R-squared:  0.002792,   Adjusted R-squared:  0.001219 
 ## F-statistic: 1.775 on 1 and 634 DF,  p-value: 0.1832</code></pre>
-<pre class="r"><code>dataOCT2%&gt;%
-  ggplot(aes(x=percent, y=D_majorvote_pct,
-             label=year)) +
-    geom_smooth(method=&quot;lm&quot;, formula = y ~ x) +
-    geom_hline(yintercept=50, lty=2) +
-    geom_vline(xintercept=0.01, lty=2) +
-    xlab(&quot;Unemployment Percentage in October of Midterm Year&quot;) +
-    ylab(&quot;Democratic Party Popular Vote&quot;) +
-    theme_bw() +
-    labs(title = &quot;October Unemployment Percentage and Democratic Vote Share in House Elections&quot;, subtitle = &quot;midterm years between 1978-2018&quot;)</code></pre>
 <p><img src="http://example.org/post/2022-09-15-blog-post-2-economic-forces/index_files/figure-html/unnamed-chunk-5-1.png" width="672" />
 To further test Wright (2012)’s theory in relation to the Congressional midterms, I analyzed the relationship between Democratic vote share and unemployment rate when Republicans were the incumbent party. However, my analysis fails to provide support for Wright (2012)’s claims. During years in which the incumbent party was Republican, there is a weak, negative relationship between unemployment rate and Democratic vote share. The correlation coefficient is -0.5408313 and the linear regression model is y = -1.467x + 58.606, indicating an increase in 1% unemployment is associated with a decrease in Democratic vote share by 1.467%. This is statistically significant and the R^2 is 0.288, indicating this can explain 28.8% of the variability in the prediction model.</p>
 </div>
 <div id="democrat-incumbent" class="section level1">
 <h1>Democrat Incumbent</h1>
-<pre class="r"><code>dataDEM2 &lt;- dataOCT2 %&gt;%
-  filter(H_incumbent_party == &quot;D&quot;)
-
-cor(dataDEM2$percent, dataDEM2$D_majorvote_pct)</code></pre>
 <pre><code>## [1] 0.193193</code></pre>
-<pre class="r"><code>lm_unemployDEMAUG &lt;- lm(D_majorvote_pct ~ percent, 
-              data = dataDEM2)
-summary(lm_unemployDEMAUG)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = D_majorvote_pct ~ percent, data = dataDEM2)
@@ -158,21 +116,35 @@ summary(lm_unemployDEMAUG)</code></pre>
 </div>
 <div id="republican-incumbent" class="section level1">
 <h1>Republican Incumbent</h1>
+<pre><code>## [1] -0.5408313</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = D_majorvote_pct ~ percent, data = dataDEM)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -6.6080 -2.2065  0.5855  1.9226  5.9007 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  58.6062     0.8519  68.792  &lt; 2e-16 ***
+## percent      -1.4672     0.1821  -8.057 1.85e-13 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 2.703 on 157 degrees of freedom
+## Multiple R-squared:  0.2925, Adjusted R-squared:  0.288 
+## F-statistic: 64.91 on 1 and 157 DF,  p-value: 1.851e-13</code></pre>
 <p>Despite this, when the Democrats are the incumbents, they still see a positive relationship between vote share and unemployment rate, indicating their voters do not seem to punish them for rising unemployment. The correlation coefficient is 0.193 and the linear regression model is y = 0.30391x + 49.147, indicating an increase in 1% in unemployment rate is associated with an increase in Democratic vote share by 3.03%. While this is statistically significant, it only accounts for 3.53% of the variation in the model.</p>
 <p>Next, I analyzed Wright (2012)’s second measurement of unemployment, subtracting the unemployment rate in January of the election year from the rate in October of that same year.</p>
-<div id="january---october-data" class="section level2">
-<h2>January - October data</h2>
-<p>I found a positive but slightly weak relationship between unemployment rate and Democratic vote share. The correlation coefficient between the two variables is 0.357. The linear regression model is y = 1.402x + 51.289, indicating that an increase in 1% unemployment from January to October of the election year results in an increase in 1.402% vote share for the Democrats in the House election. This difference is statistically significant. The R^2 is 0.127, indicating that this explains 12.7% of the variability in the prediction. Comparing this model to the one that analyzed only data from October, the measured change in unemployment rate holds a stronger relationship with Democratic vote share.</p>
 </div>
+<div id="january---october-data" class="section level1">
+<h1>January - October data</h1>
+<p>I found a positive but slightly weak relationship between unemployment rate and Democratic vote share. The correlation coefficient between the two variables is 0.357. The linear regression model is y = 1.402x + 51.289, indicating that an increase in 1% unemployment from January to October of the election year results in an increase in 1.402% vote share for the Democrats in the House election. This difference is statistically significant. The R^2 is 0.127, indicating that this explains 12.7% of the variability in the prediction. Comparing this model to the one that analyzed only data from October, the measured change in unemployment rate holds a stronger relationship with Democratic vote share.</p>
 </div>
 <div id="democratic-vote-share" class="section level1">
 <h1>Democratic vote share</h1>
-<pre class="r"><code>#dem corr
-cor(dataTIME2$percent_change, dataTIME2$D_majorvote_pct)</code></pre>
 <pre><code>## [1] 0.3569144</code></pre>
-<pre class="r"><code>lm_unemploy &lt;- lm(D_majorvote_pct ~ percent_change, 
-              data = dataTIME2)
-summary(lm_unemploy)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = D_majorvote_pct ~ percent_change, data = dataTIME2)
@@ -191,29 +163,12 @@ summary(lm_unemploy)</code></pre>
 ## Residual standard error: 3.364 on 1270 degrees of freedom
 ## Multiple R-squared:  0.1274, Adjusted R-squared:  0.1267 
 ## F-statistic: 185.4 on 1 and 1270 DF,  p-value: &lt; 2.2e-16</code></pre>
-<pre class="r"><code>dataTIME2%&gt;%
-  ggplot(aes(x=percent_change, y=D_majorvote_pct,
-             label=year)) +
-    geom_smooth(method=&quot;lm&quot;, formula = y ~ x) +
-    geom_hline(yintercept=50, lty=2) +
-    geom_vline(xintercept=0.01, lty=2) +
-    xlab(&quot;Change in Unemployment Rate (October - January)&quot;) +
-    ylab(&quot;Democratic Party Popular Vote&quot;) +
-    theme_bw() +
-    labs(title = &quot;Unemployment Rate Change and Democratic Vote Share in House Elections&quot;, subtitle = &quot;midterm years between 1978-2018&quot;)</code></pre>
 <p><img src="http://example.org/post/2022-09-15-blog-post-2-economic-forces/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <p>Subsetting to only include cases of Democratic incumbency, I found that the correlation was 0.097, with the model y=0.16x + 50.109. An increase from January to October of 1% in the unemployment rate was associated with an increase in Democratic vote share of 1.6%, though this was not as statistically significant as the last relationship, and only accounted for 0.85% of the variability.</p>
 </div>
 <div id="democrat-incumbent-1" class="section level1">
 <h1>Democrat Incumbent</h1>
-<pre class="r"><code>dataDEMTIME &lt;- dataTIME2 %&gt;%
-  filter(H_incumbent_party == &quot;D&quot;)
-
-cor(dataDEMTIME$percent, dataDEMTIME$D_majorvote_pct)</code></pre>
 <pre><code>## [1] 0.09743571</code></pre>
-<pre class="r"><code>lm_unemployDEMTIME &lt;- lm(D_majorvote_pct ~ percent, 
-              data = dataDEMTIME)
-summary(lm_unemployDEMTIME)</code></pre>
 <pre><code>## 
 ## Call:
 ## lm(formula = D_majorvote_pct ~ percent, data = dataDEMTIME)
@@ -238,26 +193,12 @@ summary(lm_unemployDEMTIME)</code></pre>
 </div>
 <div id="model-with-october-data-democrat-incumbent" class="section level1">
 <h1>Model with October data, Democrat Incumbent</h1>
-<pre class="r"><code>unemployment22 &lt;- read_csv(&quot;unemployment22.csv&quot;)
-mean(unemployment22$change)</code></pre>
 <pre><code>## [1] -0.632</code></pre>
-<pre class="r"><code>unemployAug &lt;- unemployment22 %&gt;%
-  select(&#39;state&#39;, &#39;Aug&#39;) %&gt;%
-  rename(percent = Aug)
-
-model22 &lt;- predict(lm_unemployDEMAUG, unemployAug, interval=&quot;prediction&quot;)
-mean(model22)</code></pre>
 <pre><code>## [1] 50.16049</code></pre>
 <p>Meanwhile, just for comparison’s sake, the model for change in unemployment rate predicts that Democrats will win 50.01% of the vote share. There is no strong difference in the two prediction models.</p>
 </div>
 <div id="model-with-january---october-democrat-incumbent" class="section level1">
 <h1>Model with January - October, Democrat Incumbent</h1>
-<pre class="r"><code>unemployTIME &lt;- unemployment22 %&gt;%
-  select(&#39;state&#39;, &#39;change&#39;) %&gt;%
-  rename(percent = change)
-
-model22 &lt;- predict(lm_unemployDEMTIME, unemployTIME, interval=&quot;prediction&quot;)
-mean(model22)</code></pre>
 <pre><code>## [1] 50.00784</code></pre>
 <p>From January to August in 2022, unemployment in the US has decreased by an average rate of 0.632%, potentially indicating that Democrats will have the ability to win the popular two-party vote margin, given the above models and voters’ perceptions of politicians’ ability to fix unemployment. With people, on average, “better off” than they were earlier in the year, this may mean they’ll re-elect Democratic candidates. However, it is still early out from the election in terms of unemployment measurements, so that will be something to watch for over the next month.</p>
 </div>
@@ -277,7 +218,7 @@ mean(model22)</code></pre>
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-09-18 22:29:28.259483 -0400 EDT m=&#43;0.251754864">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-09-19 12:32:55.694417 -0400 EDT m=&#43;0.253278940">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
