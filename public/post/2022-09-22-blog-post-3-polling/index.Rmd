@@ -1,0 +1,280 @@
+---
+title: 'Blog Post 3: Polling'
+author: Claire Duncan
+date: '2022-09-22'
+slug: []
+categories: []
+tags: []
+summary: This week in Election Analytics, we covered polling as a predictor of election results. Polling is central to understanding what the electorate wants and how they believe the government is working to achieve those goals and needs. Polling also generally allows for knowing the average opinion of the population as it can uncover a true estimate through canceling out the errors and outliers that occur within a polling sample. 
+---
+
+The most significant difference between the 538 and Economist forecasts are their emphasis - or lack thereof - on polling within their models. While the Economist states that for House elections “the single best indicator is polls,” 538’s House forecast is “less polling-centric” as Nate Silver writes that “districts are polled sporadically and polling can be an adventure because of small sample sizes and the demographic peculiarities of each district.” Instead, for the 2022 midterms, 538 places more weight on the partisan leaning of a state, given the increasing importance of partisanship across the country in how people self-identify, factoring into how they make their decision at the ballot box.
+
+The Economist’s model gives more weight to polls generated closer to the election, given that polls in the first half of an election year are less representative or predictive of final election results while polls conducted close to Election Day more clearly reflect how people will actually vote. The Economist uses the Generic Ballot, a poll that asks what party someone plans to vote for.
+
+Interestingly, neither the Economist or 538 mentions economics as a strong fundamental factor. In fact, 538’s only mention of economic data is their consideration of the amount of fundraising that a candidate receives throughout their race.
+
+As we have learned, voters do not always have a clear understanding of an upcoming election or their views on candidates or important issues until right up until Election Day. With this in mind, while polls like the Generic Ballot can be a relative indicator of the way an election will play out, I am more inclined to agree with 538’s model. 
+
+In my model, I focused on polling and economic data during quarters 7 and 8, or the second half of the year of the election. While last week I used quarterly, state-wide unemployment rates, I used national rates this week to make the data frame fit better with the other data frames I used. The popular vote data included the incumbent and challenger party status and the major vote percentage each party received. The polling data included each individual poll, the days until election, the party, and the amount of support the poll found for that particular party. It is important to note that my data set only has 20 observations, given the subsetting of the economic data set to include only election years. This will limit the true predictive value of my model.
+
+
+
+```{r, include = FALSE, message = FALSE, echo=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(readr)
+library(stargazer)
+```
+
+
+```{r, show_col_types = FALSE, include = FALSE, message = FALSE, echo=FALSE}
+poll_df <- read_csv("polls_df.csv")
+
+
+popvote_df <- read_csv('house_popvote_seats.csv')
+popvote <- popvote_df %>%
+  select('year', 'winner_party', 'H_incumbent_party', 'H_incumbent_party_majorvote_pct','D_majorvote_pct', 'R_majorvote_pct')
+
+
+unemployment <- read_csv('unemployment_national_quarterly_final.csv')
+unemployment <- unemployment %>%
+  select('year', 'quarter_cycle', 'UNRATE') %>%
+  filter(year == 1982 | year == 1986 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018 | year == 2022) %>%
+  filter(quarter_cycle >= 3) %>%
+  group_by(year) %>%
+  mutate(ave_unemploy = mean(UNRATE))
+
+unemployment <- unemployment %>%
+  select('year', 'ave_unemploy') %>%
+  unique()
+
+
+alldata <- popvote_df %>% 
+    full_join(poll_df %>% 
+                  filter(bmonth >= 7) %>% 
+                  group_by(year, party) %>% 
+                  summarise(avg_support=mean(support))) %>% 
+    left_join(unemployment)
+
+alldata <- alldata %>%
+  drop_na()
+```
+
+```{r, show_col_types = FALSE, message = FALSE}
+alldata %>%
+  ggplot(aes(x = year, y = avg_support, colour = party)) +
+    geom_point(size = 0.3) +
+    geom_line(size = 0.3) +
+    scale_color_manual(values = c("blue","red"), labels = c("Democrat", "Republican")) +
+    xlab("Year") + ylab("Generic Ballot Support") + labs(title = "Polling Averages in Midterm Years (1982-2018)") +
+    theme_classic()
+```
+
+
+
+Using only the national unemployment rate, the correlation between the Democrat vote share was 0.023 and the correlation between the Republican vote share was -0.023, both very small and weak relationships. This aligns with my findings from last week that unemployment rate is not a strong predictor of vote share. Both R^2 values were 0.0001, further indicating their lack of predictive ability.
+
+
+```{r, warning = FALSE, message = FALSE, echo=FALSE}
+##fundamentals model
+dat_econ_D <- alldata[alldata$party == 'D',]
+dat_econ_R <- alldata[alldata$party == 'R',]
+mod_econ_D <- lm(D_majorvote_pct ~ ave_unemploy, data = dat_econ_D)
+mod_econ_R <- lm(R_majorvote_pct ~ ave_unemploy, data = dat_econ_R)
+
+stargazer(mod_econ_D, type = 'text')
+stargazer(mod_econ_R, type = 'text')
+```
+
+
+Looking at the polling data, there was a more significant effect on vote share, which makes sense given the inherent nature of the relationship between who people say they are going to vote for and who they actually vote for. The correlation between Democratic vote share and polling of Democratic average support was 1.24 with an R^2 of 0.81. An increase of 1% in support in the polls for Democrats is associated with an increase of 1.24% in vote share percentage, which is a statistically significant finding. The correlation between Republican vote share and polling of Republican average support was 1.21 with an R^2 of . 0.78. An increase of 1% in support in the polls for Republicans is associated with an increase in 1.21% in vote share percentage. This was also statistically significant. Both R^2 values indicate that about 80% of variation in the predicted models can be explained by these regressions which demonstrates their strong predictive value. These two regression models are interesting as they indicate that the results of an election may be more favorable towards both parties than the polls originally indicated. However, this is interesting given that in midterm election years, turnout is generally lower. Next time, I might consider the difference in polls that are sampled from registered voters compared to likely voters to gain a more clear understanding of actual voter behavior.
+
+```{r, warning = FALSE, message = FALSE, echo=FALSE}
+##adjusted polls-only model
+dat_poll_D <- alldata[alldata$party == 'D',]
+dat_poll_R <- alldata[alldata$party == 'R',]
+mod_poll_D <- lm(D_majorvote_pct ~ avg_support, data = dat_poll_D)
+mod_poll_R <- lm(R_majorvote_pct ~ avg_support, data = dat_poll_R)
+
+stargazer(mod_poll_D, type = 'text')
+stargazer(mod_poll_R, type = 'text')
+```
+
+In combining both unemployment and polling in a regression model, it is again clear that polling is the stronger predictive force. For Democratic vote share, the correlation of polling averages is 1.26 and the correlation of unemployment rate is actually negative, -0.23. The R^2 for this model is 0.825, only marginally better than the R^2 of the polling-only model. For Republican vote share, the correlation with polling averages is 1.21, and the unemployment correlation is 0.083. The R^2 is 0.78, also the same as in the polling-only model. The interaction between unemployment and polling is interesting but not statistically significant, given the small correlations and lack of change in R^2 and predictive value.
+
+```{r, warning = FALSE, message = FALSE, echo=FALSE}
+## adjusted polls + fundamentals model
+dat_plus <- alldata[!is.na(alldata$avg_support) & !is.na(alldata$ave_unemploy),]
+dat_plus_D <- dat_plus[dat_plus$party == 'D',]
+dat_plus_R <- dat_plus[dat_plus$party == 'R',]
+mod_plus_D <- lm(D_majorvote_pct ~ avg_support + ave_unemploy, data = dat_plus_D)
+mod_plus_R <- lm(R_majorvote_pct ~ avg_support + ave_unemploy, data = dat_plus_R)
+
+stargazer(mod_plus_D, type = 'text')
+stargazer(mod_plus_R, type = 'text')
+```
+
+Running both in- and out-of-sample tests demonstrates that the polling and combined models are much better predictors of vote share than the national unemployment rate. This was something I also found last week, so going forward unemployment rate will no longer be considered in my predictive model. I have not included the out of sample tests in this blog, but they can be found in my code. From the in-sample fit, there is a more positive relationship within the prediction that uses polling and the one that combines polling with unemployment, compared to the one that only uses unemployment.
+
+```{r, warning = FALSE, include = FALSE, message = FALSE}
+
+## in-sample fit
+mean(abs(mod_econ_D$residuals))
+mean(abs(mod_econ_R$residuals))
+
+mean(abs(mod_poll_D$residuals))
+mean(abs(mod_poll_R$residuals))
+
+mean(abs(mod_plus_D$residuals))
+mean(abs(mod_plus_R$residuals))
+
+
+par(mfrow=c(3,2))
+{
+    plot(mod_econ_D$fitted.values, dat_econ_D$D_majorvote_pct,
+         main="Fundamentals Prediction (Democratic Party)", xlab="predicted", ylab="true", 
+         cex.lab=1.5, cex.main=2, type='n',xlim=c(40,65),ylim=c(40,65))
+    text(mod_econ_D$fitted.values, dat_econ_D$D_majorvote_pct, dat_econ_D$year)
+    abline(a=0, b=1, lty=2)
+    
+    plot(mod_econ_R$fitted.values, dat_econ_R$R_majorvote_pct,
+         main="Fundamentals Prediction (Republican Party)", xlab="predicted", ylab="true", 
+         cex.lab=1.5, cex.main=2, type='n',xlim=c(40,55),ylim=c(40,55))
+    text(mod_econ_R$fitted.values, dat_econ_R$R_majorvote_pct, dat_econ_R$year)
+    abline(a=0, b=1, lty=2)
+    
+    plot(mod_poll_D$fitted.values, dat_poll_D$D_majorvote_pct,
+         main="Polling Prediction (Democratic Party)", xlab="predicted", ylab="true", 
+         cex.lab=1.5, cex.main=2, type='n',xlim=c(40,55),ylim=c(40,55))
+    text(mod_poll_D$fitted.values, dat_poll_D$D_majorvote_pct, dat_poll_D$year)
+    abline(a=0, b=1, lty=2)
+    
+    plot(mod_poll_R$fitted.values, dat_poll_R$R_majorvote_pct,
+         main="Polling Prediction (Republican Party)", xlab="predicted", ylab="true", 
+         cex.lab=1.5, cex.main=2, type='n',xlim=c(40,55),ylim=c(40,55))
+    text(mod_poll_R$fitted.values, dat_poll_R$R_majorvote_pct, dat_poll_R$year)
+    abline(a=0, b=1, lty=2)
+    
+    plot(mod_plus_D$fitted.values, dat_plus_D$D_majorvote_pct,
+         main="Fundamentals + Polling (Democratic Party)", xlab="predicted", ylab="true", 
+         cex.lab=1.5, cex.main=2, type='n',xlim=c(40,55),ylim=c(40,55))
+    text(mod_plus_D$fitted.values, dat_plus_D$D_majorvote_pct, dat_plus_D$year)
+    abline(a=0, b=1, lty=2)
+    
+    plot(mod_plus_R$fitted.values, dat_plus_R$R_majorvote_pct,
+         main="Fundamentals + Polling (Republican Party)", xlab="predicted", ylab="true", 
+         cex.lab=1.5, cex.main=2, type='n',xlim=c(40,55),ylim=c(40,55))
+    text(mod_plus_R$fitted.values, dat_plus_R$R_majorvote_pct, dat_plus_R$year)
+    abline(a=0, b=1, lty=2)
+}
+
+```
+
+```{r, warning = FALSE, include = FALSE, message = FALSE}
+
+all_years <- seq(from=1982, to=2018, by=4)
+outsamp_dflist <- lapply(all_years, function(year){
+ 
+  true_D <- unique(alldata$D_majorvote_pct[alldata$H_incumbent_party == 'D'])
+  true_R <- unique(alldata$R_majorvote_pct[alldata$H_incumbent_party == 'R'])
+
+  ##fundamental model out-of-sample prediction
+  mod_econ_D_ <- lm(D_majorvote_pct ~ ave_unemploy, data = dat_econ_D)
+  mod_econ_R_ <- lm(R_majorvote_pct ~ ave_unemploy, data = dat_econ_R)
+  pred_econ_D <- predict(mod_econ_D_, dat_econ_D)
+  pred_econ_R <- predict(mod_econ_R_, dat_econ_R)
+
+  if (year >= 1982) {
+    ##poll model out-of-sample prediction
+    mod_poll_D_ <- lm(D_majorvote_pct ~ avg_support, data = dat_poll_D)
+    mod_poll_R_ <- lm(D_majorvote_pct ~ avg_support, data = dat_poll_R)
+    pred_poll_D <- predict(mod_poll_D_, dat_poll_D)
+    pred_poll_R <- predict(mod_poll_R_, dat_poll_R)
+
+
+    ##plus model out-of-sample prediction
+    mod_plus_D_ <- lm(D_majorvote_pct ~ ave_unemploy + avg_support, data = dat_plus_D)
+    mod_plus_R_ <- lm(D_majorvote_pct ~ ave_unemploy + avg_support, data = dat_plus_R)
+    pred_plus_D <- predict(mod_plus_D_, dat_plus_D)
+    pred_plus_R <- predict(mod_plus_R_, dat_plus_R)
+  } else {
+    pred_poll_D <- pred_poll_R <- pred_plus_D <- pred_plus_R <- NA
+  }
+  
+  cbind.data.frame(year,
+        econ_margin_error = (pred_econ_D-pred_econ_R) - (true_D-true_R),
+        poll_margin_error = (pred_poll_D-pred_poll_R) - (true_D-true_R),
+        plus_margin_error = (pred_plus_D-pred_plus_R) - (true_D-true_R),
+        econ_winner_correct = (pred_econ_D > pred_econ_R) == (true_D > true_R),
+        poll_winner_correct = (pred_poll_D > pred_poll_R) == (true_D > true_R),
+        plus_winner_correct = (pred_plus_D > pred_plus_R) == (true_D > true_R)
+  )
+})
+
+outsamp_df <- do.call(rbind, outsamp_dflist)
+colMeans(abs(outsamp_df[2:4]), na.rm=T)
+colMeans(outsamp_df[5:7], na.rm=T) ### classification accuracy
+
+outsamp_df[,c("year","econ_winner_correct","poll_winner_correct","plus_winner_correct")]
+
+```
+
+```{r, warning = FALSE, message = FALSE, include = FALSE}
+dat_2022_D <- data.frame(ave_unemploy = 3.7, avg_support = 45.1)
+dat_2022_R <- data.frame(ave_unemploy = 3.7, avg_support = 43.8)
+
+predict(mod_plus_D, newdata = dat_2022_D)
+predict(mod_plus_R, newdata = dat_2022_R)
+
+## prediction intervals
+(pred_plus_D <- predict(mod_plus_D, dat_2022_D, 
+                          interval = "prediction", level=0.95))
+(pred_plus_R <- predict(mod_plus_R, dat_2022_R, 
+                          interval = "prediction", level=0.95))
+
+(pred_poll_D <- predict(mod_poll_D, dat_2022_D, 
+                          interval = "prediction", level=0.95))
+(pred_poll_R <- predict(mod_poll_R, dat_2022_R, 
+                          interval = "prediction", level=0.95))
+
+(pred_econ_D <- predict(mod_econ_D, dat_2022_D, 
+                          interval = "prediction", level=0.95))
+(pred_econ_R <- predict(mod_econ_R, dat_2022_R, 
+                          interval = "prediction", level=0.95))
+
+
+pred_df <- rbind.data.frame(
+  data.frame(pred_plus_D, model="plus", party="GOP"),
+  data.frame(pred_plus_R, model="plus", party="DEM"),
+  data.frame(pred_poll_D, model="polls", party="GOP"),
+  data.frame(pred_poll_R, model="polls", party="DEM"),
+  data.frame(pred_econ_D, model="fundamentals", party="GOP"),
+  data.frame(pred_econ_R, model="fundamentals", party="DEM")
+)
+ggplot(pred_df, 
+       aes(x=party, y=fit, ymin=lwr, ymax=upr, color=model)) +
+  geom_pointrange(position = position_dodge(width = 0.5)) + 
+  theme_bw()
+
+```
+
+As a final prediction, I used the combined model of both unemployment and polling but weighted polling stronger, especially as I was considering polls conducted within the last half of the year before the election. While the intervals are pretty varied, my final prediction for this week has Democrats winning 50.92% of the vote and Republicans winning 49.26%.
+
+```{r, warning = FALSE, echo = FALSE}
+days_left <- 120
+pwt <- 1/sqrt(days_left); ewt <- 1-(1/sqrt(days_left));
+
+pwt*predict(mod_poll_D, dat_2022_D) + ewt*predict(mod_econ_D, dat_2022_D) # adjusted poll
+pwt*predict(mod_poll_R, dat_2022_R) + ewt*predict(mod_econ_R, dat_2022_R) # adjusted poll
+
+```
+
+
+References:
+How does The Economist’s midterms election model work? The Economist. September 9, 2022. https://www.economist.com/the-economist-explains/2022/09/09/how-does-the-economists-midterms-election-model-work
+
+How the House of Representatives forecast works. The Economist. Updated September 25, 2022. https://www.economist.com/interactive/us-midterms-2022/forecast/house/how-this-works
+
+How FiveThirtyEight’s House, Senate And Governor Models Work. Five Thirty Eight. Last edited June 30, 2022. https://fivethirtyeight.com/methodology/how-fivethirtyeights-house-and-senate-models-work/
+

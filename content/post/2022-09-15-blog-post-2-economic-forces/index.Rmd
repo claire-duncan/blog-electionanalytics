@@ -36,6 +36,8 @@ data1 <- left_join(economy_df, popvote_df, by = 'year')
 data1 <- data1 %>%
   drop_na()
 
+write_csv(data1, "/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-22-blog-post-3-polling/dat.csv")
+
 # new df
 data2 <- data1 %>% 
     select('year', 'winner_party', 'H_incumbent_party', 'H_incumbent_party_majorvote_pct', 
@@ -58,6 +60,9 @@ unemployment2$year <- as.numeric(unemployment2$year)
 unemploymentYEAR <- unemployment2 %>%
   filter(year == 1978 | year == 1982 | year == 1986 | year == 1980 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018)
 
+
+write_csv(unemploymentYEAR, "/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-22-blog-post-3-polling/unemployment.csv")
+
 ```
 
 
@@ -71,6 +76,9 @@ dataOCT <- left_join(data2, unemploymentOCT, by = 'year')
 
 dataOCT2 <- dataOCT %>%
   drop_na()
+
+
+write_csv(dataOCT2, "/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-22-blog-post-3-polling/fulldata.csv")
 ```
 
 First, I looked at the unemployment rate only from October of the midterm election year and found a positive but weak relationship. The correlation coefficient between the two variables is 0.05. The linear regression model is y = 0.082x + 50.858, indicating that an increase in 1% unemployment results in an increase in 0.08% vote share for the Democrats in the midterm House election. While this does support Wright (2012), my analysis was not statistically significant, and the R^2 was 0.00122, indicating that this can only explain 0.122% of the variability in the prediction.

@@ -6,7 +6,16 @@
     <description>Recent content in Posts on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 15 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 22 Sep 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog Post 3: Polling</title>
+      <link>http://example.org/post/2022-09-22-blog-post-3-polling/</link>
+      <pubDate>Thu, 22 Sep 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/2022-09-22-blog-post-3-polling/</guid>
+      <description>This week in Election Analytics, we covered polling as a predictor of election results. Polling is central to understanding what the electorate wants and how they believe the government is working to achieve those goals and needs. Polling also generally allows for knowing the average opinion of the population as it can uncover a true estimate through canceling out the errors and outliers that occur within a polling sample.</description>
+    </item>
+    
     <item>
       <title>Blog Post 2: Economic Forces</title>
       <link>http://example.org/post/2022-09-15-blog-post-2-economic-forces/</link>
