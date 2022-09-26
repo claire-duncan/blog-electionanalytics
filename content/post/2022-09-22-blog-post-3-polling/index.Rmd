@@ -61,7 +61,7 @@ alldata <- alldata %>%
   drop_na()
 ```
 
-```{r, show_col_types = FALSE, message = FALSE}
+```{r, show_col_types = FALSE, message = FALSE, echo = FALSE}
 alldata %>%
   ggplot(aes(x = year, y = avg_support, colour = party)) +
     geom_point(size = 0.3) +
