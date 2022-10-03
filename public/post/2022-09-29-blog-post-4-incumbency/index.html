@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+		
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Blog Post 4: Incumbency &middot; My New Hugo Site</title>
+
+		
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/fonts.css">
+		
+		<link rel="icon" href="/favicon.ico"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="My New Hugo Site" />
+
+		<script src="/js/darkmode.js"></script>
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					
+						<h2 class="nav-title">My New Hugo Site</h2>
+					
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        <div id="darkModeToggle" onclick="toggleDarkMode()">
+  &#9680; 
+</div>
+
+        
+
+<main>
+	
+
+
+        <div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Claire Duncan
+        <br>
+        <span>on&nbsp;</span><time datetime="2022-09-29 00:00:00 &#43;0000 UTC">September 29, 2022</time>
+</div>
+
+		<h1 class="post-title">Blog Post 4: Incumbency</h1>
+<div class="post-line"></div>
+
+		
+
+		
+
+
+<p>First, I mapped both the Democratic vote share in the 2018 midterms by Congressional district and the average of experts’ predictions in order to compare the two. To note, I filtered out Hawaii and Alaska in order for the mapping feature in R to work. The experts’ predictions - from a Ballotpedia dataset including predictions from Cook, Inside Elections, and Crystal Ball - were calculated on a scale from 1-7, with 1 indicating Strong Democrat and 7 indicating Strong Republican. To compare the two, I coded to see if the experts were correct or not. I based this on who they predicted to win, with 3.5 as the cutoff point for a Democratic winner or a Republican winner. In the comparison map, it is obvious that the majority of the experts’ predictions were true. There were only 21 instances in which the average of the experts’ ratings were wrong, compared to 412 in which they were correct. All occurrences were counties in which a Democrat won but that the experts had predicted a Republican victory. Largely, this is indicative of the 2018 “blue wave” and the significant number of Democratic victories during the midterms, even when considering the incumbent effect of a president’s party losing seats in the House. The status of the Democratic candidate in every one of those 21 incorrect predictions was also as the challenger of the race.</p>
+<p><img src="http://example.org/post/2022-09-29-blog-post-4-incumbency/index_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="http://example.org/post/2022-09-29-blog-post-4-incumbency/index_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="http://example.org/post/2022-09-29-blog-post-4-incumbency/index_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<div id="predictive-model" class="section level2">
+<h2>Predictive Model</h2>
+<p>Using the average of the experts’ predictions, the correlation between the Democratic vote share was -6.743, indicating that an increase in 1 on the scale was associated with a decrease in vote share by 6.7%, which makes sense given that as the prediction scale increased, it leaned more to the Republicans. This model was largely predictive of vote share, with an R^2 of 0.726.</p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## avg                          -6.743***         
+##                               (0.199)          
+##                                                
+## Constant                     81.754***         
+##                               (0.931)          
+##                                                
+## -----------------------------------------------
+## Observations                    433            
+## R2                             0.726           
+## Adjusted R2                    0.726           
+## Residual Std. Error      11.092 (df = 431)     
+## F Statistic         1,143.042*** (df = 1; 431) 
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>Looking at the model for Democratic vote share with both polling and expert predictions, the correlation between the polling numbers was 0.070, but the correlation with the expert predictions decreased to -3.235. The R^2 for this model was 0.760, indicating its high predictive value.</p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## avg                          -3.398***         
+##                               (0.053)          
+##                                                
+## Constant                     64.503***         
+##                               (0.242)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,343           
+## R2                             0.754           
+## Adjusted R2                    0.753           
+## Residual Std. Error      3.252 (df = 1341)     
+## F Statistic         4,101.124*** (df = 1; 1341)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## avg                          3.358***          
+##                               (0.053)          
+##                                                
+## Constant                     35.704***         
+##                               (0.242)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,345           
+## R2                             0.751           
+## Adjusted R2                    0.751           
+## Residual Std. Error      3.216 (df = 1343)     
+## F Statistic         4,056.874*** (df = 1; 1343)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>Looking at the model for Democratic vote share with polling and expert predictions, the correlation between the polling numbers was 0.070, and the correlation with the expert predictions decreased to -3.235 as compared to the model with only expert predictions. The R^2 for this model was 0.760, indicating its high predictive value. For Republican vote share the correlation between polling indicated a slightly stronger correlation in comparison to Democratic vote share with the coefficient of 0.085. The correlation between the expert ratings stayed consistent, at 3.23. This model also had an R^2 of 0.762, very similar to that of the Democratic model.</p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## avg                          -3.235***         
+##                               (0.059)          
+##                                                
+## poll                         0.070***          
+##                               (0.011)          
+##                                                
+## Constant                     60.828***         
+##                               (0.638)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,343           
+## R2                             0.760           
+## Adjusted R2                    0.760           
+## Residual Std. Error      3.208 (df = 1340)     
+## F Statistic         2,127.322*** (df = 2; 1340)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## avg                          3.237***          
+##                               (0.054)          
+##                                                
+## poll                         0.085***          
+##                               (0.011)          
+##                                                
+## Constant                     32.521***         
+##                               (0.481)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,345           
+## R2                             0.762           
+## Adjusted R2                    0.761           
+## Residual Std. Error      3.150 (df = 1342)     
+## F Statistic         2,143.389*** (df = 2; 1342)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>As we discussed incumbency in class, I subset the data into races in which the Democratic candidate was the incumbent or not. For incumbent races, the model of vote share based on polling and expert predictions was not highly predictive, with an R^2 of 0.254. The correlation between the expert prediction was -5.467 and the correlation between the polling was 0.037.
+However for challenger races, the model became much more predictive, with an R^2 of . The correlation between expert predictions was -2.954 and the correlation between polling was 0.096.</p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## avg                          -5.467***         
+##                               (0.801)          
+##                                                
+## poll                           0.037           
+##                               (0.043)          
+##                                                
+## Constant                     65.934***         
+##                               (2.131)          
+##                                                
+## -----------------------------------------------
+## Observations                    140            
+## R2                             0.254           
+## Adjusted R2                    0.243           
+## Residual Std. Error      4.775 (df = 137)      
+## F Statistic           23.271*** (df = 2; 137)  
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## avg                          -2.954***         
+##                               (0.071)          
+##                                                
+## poll                         0.096***          
+##                               (0.012)          
+##                                                
+## Constant                     58.342***         
+##                               (0.718)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,203           
+## R2                             0.712           
+## Adjusted R2                    0.711           
+## Residual Std. Error      2.919 (df = 1200)     
+## F Statistic         1,481.410*** (df = 2; 1200)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>Looking further into incumbency, I coded incumbent status as a binary variable, with an incumbent rated as 1 and a challenger rated as 0. Adding this to the model and subsetting by party, I found an interesting comparison between the Democratic and Republican models. For Democrats, incumbency was an advantage, noted by the 1.502 correlation, so a candidate being an incumbent increases vote share by 1.5%. The model for Democratic vote share had an R^2 of 0.763, indicating high predictive value. However for Republicans, incumbency was a disadvantage, as the correlation was -0.901, so being an incumbent meant a decrease in vote share by 0.901%. The model for Republican vote share had an R^2 of 0.765, also indicating high predictive value. This discrepancy may be due to the 2018 elections and the midterm losses in the House overall for Republicans. This also speaks to what was discussed in regards to Abramowitz’s time for a change model in which voters think that the other party should be in power and so punish the incumbent party. This also may be due to the context of the election and a direct punishment of Trump’s policies and administration.</p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## avg                          -3.044***         
+##                               (0.075)          
+##                                                
+## poll                         0.080***          
+##                               (0.011)          
+##                                                
+## incumb                       1.502***          
+##                               (0.368)          
+##                                                
+## Constant                     59.436***         
+##                               (0.720)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,343           
+## R2                             0.763           
+## Adjusted R2                    0.763           
+## Residual Std. Error      3.189 (df = 1339)     
+## F Statistic         1,440.324*** (df = 3; 1339)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## avg                          3.330***          
+##                               (0.058)          
+##                                                
+## poll                         0.097***          
+##                               (0.011)          
+##                                                
+## incumb                       -0.901***         
+##                               (0.207)          
+##                                                
+## Constant                     32.192***         
+##                               (0.484)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,345           
+## R2                             0.765           
+## Adjusted R2                    0.764           
+## Residual Std. Error      3.129 (df = 1341)     
+## F Statistic         1,454.339*** (df = 3; 1341)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>I don’t have a dataset from this election of incumbency so I used the model of polling and average expert ratings to make a prediction for this year’s midterms. Also, the dataset of average expert ratings from 2022 does not include every district, limiting the observations to 141 districts. I also understand the limitations of taking the mean of the predictions for all observations, given the variation in a state in terms of its demographics and partisan lean, but I am not able to do weights yet. In my final prediction for this week, based on 2022 average expert ratings and current polls, Democrats would win 50.74% vote share and Republicans would win 48.99%.</p>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA&#39;s 
+##   40.71   47.38   51.03   50.74   54.00   61.21     100</code></pre>
+<pre><code>##    Mode   FALSE    TRUE    NA&#39;s 
+## logical      95     137     100</code></pre>
+<pre><code>## [1] 50.74063</code></pre>
+<pre><code>## [1] 48.99195</code></pre>
+</div>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/post/2022-09-22-blog-post-3-polling/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			
+			<span>
+			&copy; <time datetime="2022-10-03 12:55:36.297918 -0400 EDT m=&#43;0.307359096">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

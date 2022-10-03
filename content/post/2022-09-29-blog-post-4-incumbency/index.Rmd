@@ -1,0 +1,335 @@
+---
+title: 'Blog Post 4: Incumbency'
+author: Claire Duncan
+date: '2022-09-29'
+slug: []
+categories: []
+tags: []
+summary: This week in Election Analytics, we covered incumbency as it creates advantages and disadvantages in election cycles. While incumbent politicians tend to be reelected, incumbent parties tend to do worse, especially in midterm years as the President’s party tends to lose the House.
+---
+
+```{r, include = FALSE, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(tigris)
+library(leaflet)
+
+```
+
+
+```{r, include = FALSE, show_col_types = FALSE, message = FALSE, echo=FALSE}
+historical <- read_csv("house party vote share by district 1948-2020.csv") %>%
+  clean_names()
+```
+
+```{r,  include = FALSE, show_col_types = FALSE, message = FALSE, echo=FALSE}
+dem_2018 <- historical %>% 
+  select(race_year, state, area, dem_votes_major_percent, rep_votes_major_percent, rep_votes, dem_votes, rep_status, dem_status, winner_party) %>% 
+  rename("year" = "race_year") %>% 
+  filter(year == 2018) %>%
+  separate(area, into = c("area", "district"), sep = " ") %>% 
+  select(-area) %>% 
+  mutate(district = case_when(
+    district == "Large" ~ "AL",
+    TRUE ~ district
+  ))
+
+dem_2018$district[is.na(dem_2018$district)] = 1
+
+dem_2018 <- dem_2018 %>%
+   mutate(district = case_when(
+    district == "AL" ~ "1",
+    TRUE ~ district
+  ))
+
+dem_2018$district <- as.numeric(dem_2018$district)
+
+```
+
+
+```{r,  include = FALSE, show_col_types = FALSE, message = FALSE, echo=FALSE}
+cd116 <- congressional_districts(
+  state = NULL,
+  cb = FALSE,
+  resolution = "500k",
+  year = 2018)
+
+cd116 <- cd116 %>%
+  rename("state" = "STATEFP")
+
+  
+state <- read_csv("us-state.csv")
+
+state <- state %>%
+  rename("state" = "st")
+
+district <- cd116 %>%
+  left_join(state, by = "state")
+  
+district2 <- district %>%
+  select(-c("state")) %>%
+  rename("state" = "stname", "district" = "CD116FP", "st" = "stusps")
+
+district2$district <- as.numeric(district2$district)
+
+district2 <- district2 %>%
+  mutate(district = case_when(
+    district == 0 ~ 1,
+    TRUE ~ district
+  ))
+
+
+alldata <- district2 %>%
+  left_join(dem_2018, by = c("state", "district"))
+
+simpdata <- alldata %>%
+  filter(state != "Alaska", state != "Hawaii") %>%
+  mutate(district = case_when(
+    district == 0 ~ 1,
+    TRUE ~ district
+  )) %>%
+  ms_simplify()
+
+simpdata$district <- as.numeric(simpdata$district)
+```
+
+First, I mapped both the Democratic vote share in the 2018 midterms by Congressional district and the average of experts’ predictions in order to compare the two. To note, I filtered out Hawaii and Alaska in order for the mapping feature in R to work. The experts' predictions - from a Ballotpedia dataset including predictions from Cook, Inside Elections, and Crystal Ball - were calculated on a scale from 1-7, with 1 indicating Strong Democrat and 7 indicating Strong Republican. To compare the two, I coded to see if the experts were correct or not. I based this on who they predicted to win, with 3.5 as the cutoff point for a Democratic winner or a Republican winner. In the comparison map, it is obvious that the majority of the experts’ predictions were true. There were only 21 instances in which the average of the experts’ ratings were wrong, compared to 412 in which they were correct. All occurrences were counties in which a Democrat won but that the experts had predicted a Republican victory. Largely, this is indicative of the 2018 “blue wave” and the significant number of Democratic victories during the midterms, even when considering the incumbent effect of a president’s party losing seats in the House. The status of the Democratic candidate in every one of those 21 incorrect predictions was also as the challenger of the race. 
+
+
+```{r, show_col_types = FALSE, message = FALSE, echo = FALSE}
+ggplot() + 
+  geom_sf(data=simpdata,aes(fill=dem_votes_major_percent),
+          inherit.aes=FALSE,alpha=0.9) + 
+  scale_fill_gradient(low = "white", high = "dodger blue", limits=c(0,100),  name = "Democratic Vote Share Percentage") +
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  labs(title = "Democratic Vote Share in 2018 Midterms")
+
+```
+
+
+```{r, include = FALSE, show_col_types = FALSE, message = FALSE, echo = FALSE}
+experts <- read.csv("2018_ratings_share.csv")
+
+experts <- experts %>%
+  separate(District, into = c("state", "district"), sep = "-") %>%
+  filter(state != "Alaska", state != "Hawaii") %>%
+  rename("st" = "state") %>%
+  select(st, district, avg)
+
+experts$district <- as.numeric(experts$district)
+
+comp <- experts %>%
+  left_join(simpdata, by = c("st", "district")) %>% 
+  st_as_sf()
+```
+
+
+```{r, show_col_types = FALSE, message = FALSE, echo = FALSE}
+# 1 = highly Dem, 7 = highly Rep
+ggplot() + 
+  geom_sf(data=comp, aes(fill=avg),
+          inherit.aes=FALSE,alpha=0.9) + 
+  scale_fill_gradient2(low = "dodger blue", mid = "white",  high = "red", limits=c(0,7), midpoint = 4, name = "Expert Prediction\n1 = Strong Democrat\n7 = Strong Republican") +
+  labs(title = "Average of Experts' Predicted Democratic Vote Share in 2018 Midterms") +
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+
+```
+
+
+```{r, include = FALSE, show_col_types = FALSE, message = FALSE, echo = FALSE}
+comp <- comp %>%
+  mutate(pred = case_when(avg <= 3.5 ~ "D", TRUE ~ "R"))
+
+comp <- comp %>%
+  mutate(correct = case_when(pred == winner_party ~ 1, TRUE ~ 0))
+
+comp %>%
+  filter(st != "AK", st != "HI") %>%
+  select(st, district, avg, winner_party, pred, correct, dem_votes_major_percent) %>%
+  group_by(correct) %>%
+  summarise(n=n()) %>%
+  mutate(prop = n/sum(n))
+
+
+compINCORRECT <- comp %>%
+  filter(correct == 0) %>%
+  filter(st != "AK", st != "HI")
+
+```
+
+
+```{r, show_col_types = FALSE, message = FALSE, echo = FALSE}
+ggplot() + 
+  geom_sf(data=comp, aes(fill=correct)) + scale_fill_steps(breaks = waiver(), low = "red", high = "lawngreen", name = "Correct = Green\nIncorrect = Red") +
+  labs(title = "Were Experts Correct in their Predicted Party Winner?") +
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())
+
+```
+
+## Predictive Model
+
+Using the average of the experts' predictions, the correlation between the Democratic vote share was -6.743, indicating that an increase in 1 on the scale was associated with a decrease in vote share by 6.7%, which makes sense given that as the prediction scale increased, it leaned more to the Republicans. This model was largely predictive of vote share, with an R^2 of 0.726.
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+mod_expert_D <- lm(dem_votes_major_percent ~ avg, data = comp)
+stargazer(mod_expert_D, type = 'text')
+```
+
+
+```{r, show_col_types = FALSE, include = FALSE, message = FALSE, echo = FALSE}
+polls <- read_csv('dist_polls_2018-2022.csv')
+
+pollsall <- polls %>%
+  filter(office_type == "U.S. House") %>%
+  select(party, pct, state, seat_number) %>%
+  rename("district" = "seat_number", "poll" = "pct")
+
+pollsall$district <- as.numeric(pollsall$district)
+
+comp2 <- comp %>%
+  left_join(pollsall, by = c("state", "district")) %>%
+  drop_na()
+
+```
+
+Looking at the model for Democratic vote share with both polling and expert predictions, the correlation between the polling numbers was 0.070, but the correlation with the expert predictions decreased to -3.235. The R^2 for this model was 0.760, indicating its high predictive value. 
+
+
+```{r, message = FALSE, echo = FALSE, warning = FALSE}
+# model with party, average expert rating
+dat_D <- comp2[comp2$party == 'DEM',]
+dat_R <- comp2[comp2$party == 'REP',]
+mod_D <- lm(dem_votes_major_percent ~ avg, data = dat_D)
+mod_R <- lm(rep_votes_major_percent ~ avg, data = dat_R)
+
+stargazer(mod_D, type = 'text')
+stargazer(mod_R, type = 'text')
+
+```
+
+Looking at the model for Democratic vote share with polling and expert predictions, the correlation between the polling numbers was 0.070, and the correlation with the expert predictions decreased to -3.235 as compared to the model with only expert predictions. The R^2 for this model was 0.760, indicating its high predictive value. For Republican vote share the correlation between polling indicated a slightly stronger correlation in comparison to Democratic vote share with the coefficient of 0.085. The correlation between the expert ratings stayed consistent, at 3.23. This model also had an R^2 of 0.762, very similar to that of the Democratic model.
+
+```{r, warning = FALSE, message= FALSE, echo=FALSE}
+# model with party, average expert rating, and polls
+
+dat_D2 <- comp2[comp2$party == 'DEM',]
+dat_R2 <- comp2[comp2$party == 'REP',]
+mod_D2 <- lm(dem_votes_major_percent ~ avg + poll, data = dat_D2)
+mod_R2 <- lm(rep_votes_major_percent ~ avg + poll, data = dat_R2)
+
+stargazer(mod_D2, type = 'text')
+stargazer(mod_R2, type = 'text')
+
+```
+
+
+As we discussed incumbency in class, I subset the data into races in which the Democratic candidate was the incumbent or not. For incumbent races, the model of vote share based on polling and expert predictions was not highly predictive, with an R^2 of 0.254. The correlation between the expert prediction was -5.467 and the correlation between the polling was 0.037. 
+However for challenger races, the model became much more predictive, with an R^2 of . The correlation between expert predictions was -2.954 and the correlation between polling was 0.096.
+
+```{r, warning = FALSE, echo = FALSE, message = FALSE}
+# model with expert ratings, and polls - subset on incumbency and only DEM candidates
+
+Dincumbent <- comp2 %>%
+  filter(party == 'DEM', dem_status == 'Incumbent')
+
+Dchallenger <- comp2 %>%
+  filter(party == 'DEM', dem_status == 'Challenger')
+
+mod_D2_incumbent <- lm(dem_votes_major_percent ~ avg + poll, data = Dincumbent)
+mod_D2_challenger <- lm(dem_votes_major_percent ~ avg + poll, data = Dchallenger)
+
+stargazer(mod_D2_incumbent, type = 'text')
+stargazer(mod_D2_challenger, type = 'text')
+```
+
+Looking further into incumbency, I coded incumbent status as a binary variable, with an incumbent rated as 1 and a challenger rated as 0. Adding this to the model and subsetting by party, I found an interesting comparison between the Democratic and Republican models. For Democrats, incumbency was an advantage, noted by the 1.502 correlation, so a candidate being an incumbent increases vote share by 1.5%. The model for Democratic vote share had an R^2 of 0.763, indicating high predictive value.  However for Republicans, incumbency was a disadvantage, as the correlation was -0.901, so being an incumbent meant a decrease in vote share by 0.901%. The model for Republican vote share had an R^2 of 0.765, also indicating high predictive value. This discrepancy may be due to the 2018 elections and the midterm losses in the House overall for Republicans. This also speaks to what was discussed in regards to Abramowitz’s time for a change model in which voters think that the other party should be in power and so punish the incumbent party. This also may be due to the context of the election and a direct punishment of Trump’s policies and administration.
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+# model with party, incumbency, polling, expert prediction
+
+compDEM <- comp2 %>%
+  filter(party == 'DEM') %>%
+  mutate(incumb = case_when(dem_status == 'Incumbent' ~ 1, TRUE ~ 0))
+
+compREP <- comp2 %>%
+  filter(party == 'REP') %>%
+  mutate(incumb = case_when(rep_status == 'Incumbent' ~ 1, TRUE ~ 0))
+
+mod_D2_inc <- lm(dem_votes_major_percent ~ avg + poll + incumb, data = compDEM)
+mod_R2_inc <- lm(rep_votes_major_percent ~ avg + poll + incumb, data = compREP)
+
+stargazer(mod_D2_inc, type = 'text')
+stargazer(mod_R2_inc, type = 'text')
+
+```
+
+```{r, include = FALSE, show_col_types = FALSE, echo = FALSE, message = FALSE}
+expert22 <- read_csv('expert_rating.csv')
+test_data2 <- expert22 %>% 
+  filter(year == 2022) %>% 
+  group_by(state, district) %>%
+  rename("avg" = "avg_rating")
+
+polls22 <- polls %>%
+  filter(cycle == 2022) %>%
+  filter(office_type == "U.S. House") %>%
+  select(party, pct, state, seat_number) %>%
+  rename("district" = "seat_number", "poll" = "pct")
+
+polls22$district <- as.numeric(polls22$district)
+test_data2$district <- as.numeric(test_data2$district)
+
+polls22$state <- as.character(polls22$state)
+test_data2$state <- as.character(test_data2$state)
+
+model_data <- polls22 %>%
+  left_join(test_data2, by = c("state", "district"))
+
+
+```
+
+I don't have a dataset from this election of incumbency so I used the model of polling and average expert ratings to make a prediction for this year’s midterms. Also, the dataset of average expert ratings from 2022 does not include every district, limiting the observations to 141 districts. I also understand the limitations of taking the mean of the predictions for all observations, given the variation in a state in terms of its demographics and partisan lean, but I am not able to do weights yet. In my final prediction for this week, based on 2022 average expert ratings and current polls, Democrats would win 50.74% vote share and Republicans would win 48.99%.
+
+```{r, message = FALSE, echo= FALSE}
+
+predDEM <- predict(mod_D2, newdata = model_data)
+summary(predDEM)
+
+subset <- (predDEM > 50)
+summary(subset)
+
+mean(predDEM, na.rm = TRUE)
+
+predREP <- predict(mod_R2, newdata = model_data)
+mean(predREP, na.rm = TRUE)
+
+```
+

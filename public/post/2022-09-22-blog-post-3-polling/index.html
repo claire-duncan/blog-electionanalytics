@@ -69,13 +69,6 @@
 <p>Interestingly, neither the Economist or 538 mentions economics as a strong fundamental factor. In fact, 538’s only mention of economic data is their consideration of the amount of fundraising that a candidate receives throughout their race.</p>
 <p>As we have learned, voters do not always have a clear understanding of an upcoming election or their views on candidates or important issues until right up until Election Day. With this in mind, while polls like the Generic Ballot can be a relative indicator of the way an election will play out, I am more inclined to agree with 538’s model.</p>
 <p>In my model, I focused on polling and economic data during quarters 7 and 8, or the second half of the year of the election. While last week I used quarterly, state-wide unemployment rates, I used national rates this week to make the data frame fit better with the other data frames I used. The popular vote data included the incumbent and challenger party status and the major vote percentage each party received. The polling data included each individual poll, the days until election, the party, and the amount of support the poll found for that particular party. It is important to note that my data set only has 20 observations, given the subsetting of the economic data set to include only election years. This will limit the true predictive value of my model.</p>
-<pre class="r"><code>alldata %&gt;%
-  ggplot(aes(x = year, y = avg_support, colour = party)) +
-    geom_point(size = 0.3) +
-    geom_line(size = 0.3) +
-    scale_color_manual(values = c(&quot;blue&quot;,&quot;red&quot;), labels = c(&quot;Democrat&quot;, &quot;Republican&quot;)) +
-    xlab(&quot;Year&quot;) + ylab(&quot;Generic Ballot Support&quot;) + labs(title = &quot;Polling Averages in Midterm Years (1982-2018)&quot;) +
-    theme_classic()</code></pre>
 <p><img src="http://example.org/post/2022-09-22-blog-post-3-polling/index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Using only the national unemployment rate, the correlation between the Democrat vote share was 0.023 and the correlation between the Republican vote share was -0.023, both very small and weak relationships. This aligns with my findings from last week that unemployment rate is not a strong predictor of vote share. Both R^2 values were 0.0001, further indicating their lack of predictive ability.</p>
 <pre><code>## 
@@ -223,6 +216,7 @@ How does The Economist’s midterms election model work? The Economist. Septembe
 
 	<div class="pagination">
 		<a href="/post/2022-09-15-blog-post-2-economic-forces/" class="left arrow">&#8592;</a>
+		<a href="/post/2022-09-29-blog-post-4-incumbency/" class="right arrow">&#8594;</a>
 
 		<a href="#" class="top">Top</a>
 	</div>
@@ -232,7 +226,7 @@ How does The Economist’s midterms election model work? The Economist. Septembe
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-09-26 12:47:01.698967 -0400 EDT m=&#43;0.356257893">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-10-03 12:55:36.298321 -0400 EDT m=&#43;0.307762608">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
