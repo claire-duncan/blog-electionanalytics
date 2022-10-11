@@ -1,0 +1,295 @@
+---
+title: 'Blog Post 5: The Air Game'
+author: Claire Duncan
+date: '2022-10-08'
+slug: []
+categories: []
+tags: []
+---
+This week, we turned from studying the fundamentals of an election to the effects of campaigns themselves, starting with advertising. Are campaign commercials able to persuade voters to vote differently or to turn out in the first place? Research has found that ads have a very short effect, making them not very durable. decays after a few days (Hill, Lo, Vavreck, Zaller (2013)). How much does campaign advertising towards the end of an election impact voter behavior?
+
+To answer this, we used a dataset on campaign advertising spanning from 2012-2018. Variables I was interested in included the airdate, what party had bought the ad, what district it was targeting, and the estimated cost of the ad.
+
+```{r, include = FALSE, echo = FALSE, message = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(tigris)
+library(leaflet)
+library(dplyr)
+library(scales)
+
+```
+
+```{r, include = FALSE, echo = FALSE, message = FALSE, show_col_types = FALSE}
+#pvstate_df   <- read_csv("incumb_dist_1948-2022.csv")
+#ad_creative  <- read_csv("/Users/claireduncan/Desktop/*gov 1347/Lab sessions/Lab Session 5 - Air War (10-6)/ads_2006_2018.csv")
+ad_issues <- read_csv("ads_issues_2012-2018.csv")
+incumbency <- read_csv("house_cands_2022.csv")
+data22 <- read_csv("data22.csv")
+historical <- read_csv("historicaldata.csv")
+state <- read_csv("state.csv")
+votes <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-29-blog-post-4-incumbency/house party vote share by district 1948-2020.csv")
+
+```
+
+
+```{r, show_col_types = FALSE,  warning = FALSE, include=FALSE, echo = FALSE, message=FALSE}
+ad_issues$district <- as.numeric(ad_issues$district)
+ad_issues$st_fips <- as.numeric(ad_issues$st_fips)
+
+ad_issues <- ad_issues %>%
+  mutate(party = case_when(party == 'Democrat' ~ 'DEM',
+                           party == 'Republican' ~ 'REP')) %>%
+  drop_na(party)
+
+ad_issues <- ad_issues %>%
+  mutate(year = as.numeric(substr(airdate, 1, 4))) %>%
+  mutate(month = as.numeric(substr(airdate, 6, 7))) %>%
+  group_by(cycle, party, state, district) %>%
+  mutate(total_cost = sum(est_cost)/100000)
+```
+
+From the ad data, I looked first at the distribution of campaign spending on ads in the second half of an election year, by party. It is clear that spending significantly increases within the last month, even within the last week leading up to Election Day. The total cost is calculated by summing the cost of every ad for a party that was aired on a singular day during the election cycle. While this pattern is noticeable for Democrats and Republicans, the difference in 2018 between the two parties is stark, with Democrats consistently spending significantly more on ads throughout the election. 
+
+```{r, show_col_types = FALSE,  warning = FALSE, echo = FALSE}
+ad_issues %>%
+  filter(month > 7) %>%
+  group_by(cycle, airdate, party) %>%
+  summarise(total_cost = sum(est_cost)) %>%
+  ggplot(aes(x=airdate, y=total_cost, color=party)) +
+  scale_x_date(date_labels = "%b, %Y") +
+  scale_y_continuous(labels = dollar_format()) +
+  scale_color_manual(values = c("blue","red"), name = "") +
+  geom_line() + geom_point(size=0.5) +
+  facet_wrap(cycle ~ ., scales="free") +
+  xlab("") + ylab("ad spend") +
+  theme_bw() +
+  theme(axis.title = element_text(size=15),
+        axis.text = element_text(size=11),
+        strip.text.x = element_text(size = 15))
+```
+
+```{r,  warning = FALSE, include=FALSE, echo = FALSE, message=FALSE}
+ad_issues2 <- ad_issues %>%
+  select("state", "district", "st_fips", "party", "total_cost", "cycle") %>%
+  rename("year" = "cycle")
+
+ad_issues2 <- ad_issues2 %>%
+  group_by(year, state, district, party) %>%
+  distinct()
+```
+
+
+```{r, include = FALSE,  warning = FALSE, echo = FALSE, message=FALSE}
+votes <- votes %>%
+  select(raceYear, State, st_fips, district_num, DemVotesMajorPercent, RepVotesMajorPercent, WinnerParty) %>% 
+  rename("year" = "raceYear", "district" = "district_num","state" = "State") %>%
+  mutate(district = case_when(
+    district == 0 ~ 1,
+    TRUE ~ district
+  ))
+
+votes$district <- as.numeric(votes$district)
+```
+
+
+```{r, show_col_types = FALSE,  warning = FALSE, include=FALSE, echo = FALSE, message=FALSE}
+combo <- ad_issues2 %>%
+  left_join(votes, by = c("year", "state", "district"))
+
+combo_D <- combo %>%
+  filter(WinnerParty == "D")
+
+combo_R <- combo %>%
+  filter(WinnerParty == "R")
+```
+
+In order to better understand the cumulative effect of advertising on campaigns, I ran a regression of the total amount spent on ads by a party on the vote share for that party, with one observation as a district within a state. I divided the total cost of advertising by 100,000 to help with the regression. Interestingly, both for Democrats and Republicans, there was a negative correlation between ad spending and vote share. For Democrats, an increase in spending was associated with a -0.190 vote share and for Republicans, the coefficient was -0.231. These were statistically significant, however, both adjusted R^2 values were less than 0.15, indicating low predictive power.
+
+```{r, show_col_types = FALSE,  warning = FALSE, echo = FALSE}
+combo_D %>%
+  ggplot(aes(x=total_cost, y=DemVotesMajorPercent)) +
+    geom_smooth(method="lm", formula = y ~ x) +
+   geom_hline(yintercept=50, lty=2) +
+    geom_vline(xintercept=0.01, lty=2) +
+    xlim(0, 120) +
+    xlab("Total Amount Spent on Ads") +
+    ylab("Democratic Party Popular Vote (divided by 100,000)") +
+    theme_bw() +
+    labs(title = "Total Ad Spending and Democratic Vote Share")
+
+combo_R %>%
+  ggplot(aes(x=total_cost, y=RepVotesMajorPercent)) +
+    geom_smooth(method="lm", formula = y ~ x) +
+    geom_hline(yintercept=50, lty=2) +
+    geom_vline(xintercept=0.01, lty=2) +
+    xlim(0, 120) +
+    xlab("Total Amount Spent on Ads (divided by 100,000)") +
+    ylab("Republican Party Popular Vote") +
+    theme_bw() +
+    labs(title = "Total Ad Spending and Republican Vote Share")
+```
+
+```{r, warning = FALSE, echo = FALSE}
+
+Dlm <- lm(DemVotesMajorPercent ~ total_cost, data = combo_D)
+stargazer(Dlm, type = 'text')
+
+Rlm <- lm(RepVotesMajorPercent ~ total_cost, data = combo_R)
+stargazer(Rlm, type = 'text')
+
+```
+
+
+
+```{r, show_col_types = FALSE,  warning = FALSE, include= FALSE, echo = FALSE, message=FALSE}
+ad_issues18 <- ad_issues2 %>%
+  filter(year == 2018)
+
+state <- state %>%
+  rename('st_fips' = 'state', 'st' = 'stusps') %>%
+  select(st_fips, st)
+
+state$st_fips <- as.numeric(state$st_fips)
+
+
+historical <- historical %>%
+  filter(party != "LIB") %>%
+  select(-c("...1", "year"))
+
+historical <- historical %>%
+  left_join(state, by = c("st"))
+
+historical$st_fips <- as.numeric(historical$st_fips)
+
+
+```
+
+
+```{r, show_col_types = FALSE,  warning = FALSE, include = FALSE, echo = FALSE, message=FALSE}
+hist_model <- ad_issues18 %>%
+  left_join(historical, by = c("party", "st_fips", "district")) %>%
+  drop_na()
+  
+```
+
+Building on my prediction model as usual, I joined this advertising data with the data set I’ve been editing over the last few weeks that includes incumbency, polling, and expert predictions.
+However I kept out incumbency because of continuous data and coding problems. My model today also uses 2018 ad spending data as a stand-in for 2022, given the lack of current data available to me. With all those considerations, my model currently predicts that Democrats would have a vote share of 50.464 and Republicans would have a vote share of 49.092, predicting a tie for the election.
+
+
+```{r, warning = FALSE,echo=FALSE}
+hist_model_D <- hist_model %>%
+  filter(party == "DEM") %>%
+  mutate(incumb = case_when(dem_status == 'Incumbent' ~ 1, TRUE ~ 0))
+
+
+mod_D <- lm(dem_votes_major_percent ~ total_cost, data = hist_model_D)
+stargazer(mod_D, type = 'text')
+
+mod_D2 <- lm(dem_votes_major_percent ~ total_cost + avg, data = hist_model_D)
+stargazer(mod_D2, type = 'text')
+
+mod_D3 <- lm(dem_votes_major_percent ~ total_cost + avg + poll, data = hist_model_D)
+stargazer(mod_D3, type = 'text')
+
+mod_D4 <- lm(dem_votes_major_percent ~ total_cost + avg + poll + incumb, data = hist_model_D)
+stargazer(mod_D4, type = 'text')
+
+stargazer(mod_D, mod_D2, mod_D3, mod_D4, type = "HTML")
+```
+
+
+```{r, warning = FALSE, echo = FALSE}
+hist_model_R <- hist_model %>%
+  filter(party == "REP") %>%
+  mutate(incumb = case_when(rep_status == 'Incumbent' ~ 1, TRUE ~ 0))
+
+mod_R <- lm(rep_votes_major_percent ~ total_cost, data = hist_model_R)
+stargazer(mod_R, type = 'text')
+
+mod_R2 <- lm(rep_votes_major_percent ~ total_cost + avg, data = hist_model_R)
+stargazer(mod_R2, type = 'text')
+
+mod_R3 <- lm(rep_votes_major_percent ~ total_cost + avg + poll, data = hist_model_R)
+stargazer(mod_R3, type = 'text')
+
+mod_R4 <- lm(rep_votes_major_percent ~ total_cost + avg + poll + incumb, data = hist_model_R)
+stargazer(mod_R4, type = 'text')
+
+stargazer(mod_R, mod_R2, mod_R3, mod_R4, type = "HTML")
+
+```
+
+```{r,  warning = FALSE, include = FALSE}
+hist_model_D %>%
+  ggplot(aes(x=total_cost, y=dem_votes_major_percent)) +
+    geom_smooth(method="lm", formula = y ~ x) +
+   geom_hline(yintercept=50, lty=2) +
+    geom_vline(xintercept=0.01, lty=2) +
+    xlim(0, 120) +
+    xlab("Total Amount Spent on Ads") +
+    ylab("Democratic Party Popular Vote") +
+    theme_bw() +
+    labs(title = "Total Ad Spending and Democratic Vote Share", subtitle = "2018 midterms")
+
+hist_model_R %>%
+  ggplot(aes(x=total_cost, y=rep_votes_major_percent)) +
+    geom_smooth(method="lm", formula = y ~ x) +
+    geom_hline(yintercept=50, lty=2) +
+    geom_vline(xintercept=0.01, lty=2) +
+    xlim(0, 120) +
+    xlab("Total Amount Spent on Ads") +
+    ylab("Republican Party Popular Vote") +
+    theme_bw() +
+    labs(title = "Total Ad Spending and Republican Vote Share", subtitle = "2018 midterms")
+```
+
+
+```{r, show_col_types = FALSE,  warning = FALSE, echo = FALSE, message=FALSE}
+data22 <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-10-08-blog-post-5-the-air-game/data22.csv")
+
+data22 <- data22 %>%
+  select(party, state, district, poll, avg)
+
+ad_issuesNEW <- ad_issues %>%
+  filter(year == 2018) %>%
+  select(party, state, district, total_cost)
+
+model_data <- data22 %>%
+  left_join(ad_issuesNEW, by = c("party", "state", "district"))
+
+model_data_DEM <- model_data %>%
+  filter(party == "DEM")
+
+model_data_REP <- model_data %>%
+  filter(party == "REP")
+
+predDEM <- predict(mod_D3, newdata = model_data_DEM)
+#summary(predDEM)
+
+subsetD <- (predDEM > 50)
+#summary(subsetD)
+
+mean(predDEM, na.rm = TRUE)
+
+
+
+predREP <- predict(mod_R3, newdata = model_data_REP)
+#summary(predREP)
+
+subsetR <- (predREP > 50)
+summary(subsetR)
+
+mean(predREP, na.rm = TRUE)
+```
+

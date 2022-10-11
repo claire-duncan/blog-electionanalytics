@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+		
+		
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>Blog Post 5: The Air Game &middot; My New Hugo Site</title>
+
+		
+		<link rel="stylesheet" href="/css/style.css">
+		<link rel="stylesheet" href="/css/fonts.css">
+		
+		<link rel="icon" href="/favicon.ico"/>
+		<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+
+		
+		<link href="" rel="alternate" type="application/rss+xml" title="My New Hugo Site" />
+
+		<script src="/js/darkmode.js"></script>
+	</head>
+
+    <body>
+        		<nav class="nav">
+			<div class="nav-container">
+				<a href="/">
+					
+						<h2 class="nav-title">My New Hugo Site</h2>
+					
+				</a>
+				<ul>
+    
+    
+</ul>
+			</div>
+		</nav>
+
+        <div id="darkModeToggle" onclick="toggleDarkMode()">
+  &#9680; 
+</div>
+
+        
+
+<main>
+	
+
+
+        <div class="post">
+		<div class="post-info">
+    <span>Written by</span>
+        Claire Duncan
+        <br>
+        <span>on&nbsp;</span><time datetime="2022-10-08 00:00:00 &#43;0000 UTC">October 8, 2022</time>
+</div>
+
+		<h1 class="post-title">Blog Post 5: The Air Game</h1>
+<div class="post-line"></div>
+
+		
+
+		
+
+
+<p>This week, we turned from studying the fundamentals of an election to the effects of campaigns themselves, starting with advertising. Are campaign commercials able to persuade voters to vote differently or to turn out in the first place? Research has found that ads have a very short effect, making them not very durable. decays after a few days (Hill, Lo, Vavreck, Zaller (2013)). How much does campaign advertising towards the end of an election impact voter behavior?</p>
+<p>To answer this, we used a dataset on campaign advertising spanning from 2012-2018. Variables I was interested in included the airdate, what party had bought the ad, what district it was targeting, and the estimated cost of the ad.</p>
+<p>From the ad data, I looked first at the distribution of campaign spending on ads in the second half of an election year, by party. It is clear that spending significantly increases within the last month, even within the last week leading up to Election Day. The total cost is calculated by summing the cost of every ad for a party that was aired on a singular day during the election cycle. While this pattern is noticeable for Democrats and Republicans, the difference in 2018 between the two parties is stark, with Democrats consistently spending significantly more on ads throughout the election.</p>
+<pre><code>## `summarise()` has grouped output by &#39;cycle&#39;, &#39;airdate&#39;. You can override using the `.groups` argument.</code></pre>
+<p><img src="http://example.org/post/2022-10-08-blog-post-5-the-air-game/index_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>In order to better understand the cumulative effect of advertising on campaigns, I ran a regression of the total amount spent on ads by a party on the vote share for that party, with one observation as a district within a state. I divided the total cost of advertising by 100,000 to help with the regression. Interestingly, both for Democrats and Republicans, there was a negative correlation between ad spending and vote share. For Democrats, an increase in spending was associated with a -0.190 vote share and for Republicans, the coefficient was -0.231. These were statistically significant, however, both adjusted R^2 values were less than 0.15, indicating low predictive power.</p>
+<p><img src="http://example.org/post/2022-10-08-blog-post-5-the-air-game/index_files/figure-html/unnamed-chunk-8-1.png" width="672" /><img src="http://example.org/post/2022-10-08-blog-post-5-the-air-game/index_files/figure-html/unnamed-chunk-8-2.png" width="672" /></p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                        DemVotesMajorPercent    
+## -----------------------------------------------
+## total_cost                   -0.190***         
+##                               (0.021)          
+##                                                
+## Constant                     62.989***         
+##                               (0.577)          
+##                                                
+## -----------------------------------------------
+## Observations                    460            
+## R2                             0.157           
+## Adjusted R2                    0.155           
+## Residual Std. Error      9.826 (df = 458)      
+## F Statistic           84.983*** (df = 1; 458)  
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                        RepVotesMajorPercent    
+## -----------------------------------------------
+## total_cost                   -0.231***         
+##                               (0.021)          
+##                                                
+## Constant                     62.519***         
+##                               (0.360)          
+##                                                
+## -----------------------------------------------
+## Observations                    737            
+## R2                             0.140           
+## Adjusted R2                    0.139           
+## Residual Std. Error      8.032 (df = 735)      
+## F Statistic          119.826*** (df = 1; 735)  
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>Building on my prediction model as usual, I joined this advertising data with the data set I’ve been editing over the last few weeks that includes incumbency, polling, and expert predictions.
+However I kept out incumbency because of continuous data and coding problems. My model today also uses 2018 ad spending data as a stand-in for 2022, given the lack of current data available to me. With all those considerations, my model currently predicts that Democrats would have a vote share of 50.464 and Republicans would have a vote share of 49.092, predicting a tie for the election.</p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## total_cost                   0.057***          
+##                               (0.005)          
+##                                                
+## Constant                     48.491***         
+##                               (0.215)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,166           
+## R2                             0.093           
+## Adjusted R2                    0.092           
+## Residual Std. Error      4.738 (df = 1164)     
+## F Statistic          119.162*** (df = 1; 1164) 
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## total_cost                   0.019***          
+##                               (0.003)          
+##                                                
+## avg                          -2.852***         
+##                               (0.052)          
+##                                                
+## Constant                     61.527***         
+##                               (0.262)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,166           
+## R2                             0.750           
+## Adjusted R2                    0.749           
+## Residual Std. Error      2.489 (df = 1163)     
+## F Statistic         1,742.102*** (df = 2; 1163)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## total_cost                   0.015***          
+##                               (0.003)          
+##                                                
+## avg                          -2.621***         
+##                               (0.054)          
+##                                                
+## poll                         0.131***          
+##                               (0.012)          
+##                                                
+## Constant                     54.920***         
+##                               (0.669)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,166           
+## R2                             0.772           
+## Adjusted R2                    0.771           
+## Residual Std. Error      2.377 (df = 1162)     
+## F Statistic         1,311.140*** (df = 3; 1162)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## total_cost                   0.018***          
+##                               (0.003)          
+##                                                
+## avg                          -2.532***         
+##                               (0.068)          
+##                                                
+## poll                         0.133***          
+##                               (0.012)          
+##                                                
+## incumb                        0.748**          
+##                               (0.356)          
+##                                                
+## Constant                     54.296***         
+##                               (0.731)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,166           
+## R2                             0.773           
+## Adjusted R2                    0.772           
+## Residual Std. Error      2.374 (df = 1161)     
+## F Statistic          987.348*** (df = 4; 1161) 
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## total_cost                   -0.045***         
+##                               (0.008)          
+##                                                
+## Constant                     50.962***         
+##                               (0.232)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,083           
+## R2                             0.030           
+## Adjusted R2                    0.029           
+## Residual Std. Error      5.055 (df = 1081)     
+## F Statistic          33.728*** (df = 1; 1081)  
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## total_cost                   0.013***          
+##                               (0.004)          
+##                                                
+## avg                          3.366***          
+##                               (0.062)          
+##                                                
+## Constant                     35.208***         
+##                               (0.314)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,083           
+## R2                             0.740           
+## Adjusted R2                    0.739           
+## Residual Std. Error      2.620 (df = 1080)     
+## F Statistic         1,535.881*** (df = 2; 1080)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## total_cost                   0.013***          
+##                               (0.004)          
+##                                                
+## avg                          3.278***          
+##                               (0.074)          
+##                                                
+## poll                          0.035**          
+##                               (0.016)          
+##                                                
+## Constant                     34.043***         
+##                               (0.617)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,083           
+## R2                             0.741           
+## Adjusted R2                    0.740           
+## Residual Std. Error      2.615 (df = 1079)     
+## F Statistic         1,029.126*** (df = 3; 1079)
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## total_cost                   0.021***          
+##                               (0.004)          
+##                                                
+## avg                          3.404***          
+##                               (0.076)          
+##                                                
+## poll                          0.040**          
+##                               (0.016)          
+##                                                
+## incumb                       -1.065***         
+##                               (0.196)          
+##                                                
+## Constant                     33.880***         
+##                               (0.610)          
+##                                                
+## -----------------------------------------------
+## Observations                   1,083           
+## R2                             0.748           
+## Adjusted R2                    0.747           
+## Residual Std. Error      2.581 (df = 1078)     
+## F Statistic          799.587*** (df = 4; 1078) 
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## [1] 50.46499</code></pre>
+<pre><code>##    Mode   FALSE    TRUE    NA&#39;s 
+## logical  109267  119727   71416</code></pre>
+<pre><code>## [1] 49.90811</code></pre>
+
+
+		
+	</div>
+
+	<div class="pagination">
+		<a href="/post/2022-09-29-blog-post-4-incumbency/" class="left arrow">&#8592;</a>
+
+		<a href="#" class="top">Top</a>
+	</div>
+</main>
+
+
+        		<footer>
+			
+			<span>
+			&copy; <time datetime="2022-10-10 21:12:02.360803 -0400 EDT m=&#43;4.616548754">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			</span>
+		</footer>
+
+    </body>
+</html>

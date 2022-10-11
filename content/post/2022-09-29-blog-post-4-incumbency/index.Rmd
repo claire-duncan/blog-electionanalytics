@@ -73,6 +73,9 @@ state <- read_csv("us-state.csv")
 state <- state %>%
   rename("state" = "st")
 
+write.csv(state, "/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-10-08-blog-post-5-the-air-game/state.csv")
+
+
 district <- cd116 %>%
   left_join(state, by = "state")
   
@@ -218,6 +221,13 @@ comp2 <- comp %>%
   left_join(pollsall, by = c("state", "district")) %>%
   drop_na()
 
+comp3 <- comp2 %>%
+  select(st, district, avg, dem_votes_major_percent, rep_votes_major_percent, winner_party, rep_status, dem_status, party, pred, poll, year)
+
+comp3 <- comp3 %>% st_drop_geometry()
+
+write.csv(comp3, "/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-10-08-blog-post-5-the-air-game/historicaldata.csv")
+
 ```
 
 Looking at the model for Democratic vote share with both polling and expert predictions, the correlation between the polling numbers was 0.070, but the correlation with the expert predictions decreased to -3.235. The R^2 for this model was 0.760, indicating its high predictive value. 
@@ -313,6 +323,7 @@ test_data2$state <- as.character(test_data2$state)
 model_data <- polls22 %>%
   left_join(test_data2, by = c("state", "district"))
 
+write.csv(model_data, "/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-10-08-blog-post-5-the-air-game/data22.csv")
 
 ```
 
