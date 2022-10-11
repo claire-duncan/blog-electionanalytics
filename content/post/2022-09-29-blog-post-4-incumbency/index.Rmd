@@ -28,7 +28,7 @@ library(leaflet)
 
 
 ```{r, include = FALSE, show_col_types = FALSE, message = FALSE, echo=FALSE}
-historical <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-10-blog-post-1-introduction/house party vote share by district 1948-2020.csv") %>%
+historical <- read_csv("/Users/claireduncan/Downloads/house party vote share by district 1948-2020.csv") %>%
   clean_names()
 ```
 

@@ -32,11 +32,11 @@ library(scales)
 
 ```{r, include = FALSE, echo = FALSE, message = FALSE, show_col_types = FALSE}
 
-ad_issues <- read_csv("ads_issues_2012-2018.csv")
+ad_issues <- read_csv("/Users/claireduncan/Downloads/ads_issues_2012-2018.csv")
 data22 <- read_csv("data22.csv")
 historical <- read_csv("historicaldata.csv")
 state <- read_csv("state.csv")
-votes <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-10-blog-post-1-introduction/house party vote share by district 1948-2020.csv")
+votes <- read_csv("/Users/claireduncan/Downloads/house party vote share by district 1948-2020.csv")
 
 ```
 
@@ -78,7 +78,7 @@ votes$district <- as.numeric(votes$district)
 
 From the ad data, I looked first at the distribution of campaign spending on ads in the second half of an election year, by party. It is clear that spending significantly increases within the last month, even within the last week leading up to Election Day. The total cost is calculated by summing the cost of every ad for a party that was aired on a singular day during the election cycle. While this pattern is noticeable for Democrats and Republicans, the difference in 2018 between the two parties is stark, with Democrats consistently spending significantly more on ads throughout the election. 
 
-```{r, show_col_types = FALSE,  warning = FALSE, echo = FALSE}
+```{r, show_col_types = FALSE,  warning = FALSE, echo = FALSE, message = FALSE}
 ad_issues %>%
   filter(month >= 7) %>%
   group_by(cycle, airdate, party) %>%
@@ -228,7 +228,6 @@ stargazer(mod_R2, type = 'text')
 
 
 ```{r, show_col_types = FALSE,  warning = FALSE, echo = FALSE, message=FALSE}
-data22 <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-10-08-blog-post-5-the-air-game/data22.csv")
 
 data22 <- data22 %>%
   select(party, state, district, poll, avg)
@@ -264,4 +263,9 @@ summary(subsetR)
 
 mean(predREP, na.rm = TRUE)
 ```
+
+
+
+References
+Hill, SJ, Lo, J., Vavreck, L., & Zaller, J. (2013). How Quickly We Forget: The Duration of Persuasion Effects From Mass Communication. Political Communication, 30(4), 521-547. http://dx.doi.org/10.1080/10584609.2013.828143 Retrieved from https://escholarship.org/uc/item/6g9321sd
 

@@ -26,8 +26,7 @@ library(sf)
 
 ##make map of GOP vote share by state (national) - 2020
 
-house_party_vote_share_by_district_1948_2020 <- read_csv("house party vote share by district 1948-2020.csv")
-h <- house_party_vote_share_by_district_1948_2020
+h <- read_csv("/Users/claireduncan/Downloads/house party vote share by district 1948-2020.csv")
 
 
 #margin
