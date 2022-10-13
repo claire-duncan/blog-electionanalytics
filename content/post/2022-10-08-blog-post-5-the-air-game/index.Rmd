@@ -215,8 +215,8 @@ mod_D2 <- lm(dem_votes_major_percent ~ total_cost + avg + poll, data = hist_mode
 ```
 
 
-```{r, warning = FALSE,echo=TRUE, eval = TRUE, results = "asis"}
-stargazer(mod_D2, type = 'latex')
+```{r, warning = FALSE,echo=FALSE}
+stargazer(mod_D2, type = 'text')
 
 ```
 
@@ -229,8 +229,8 @@ mod_R2 <- lm(rep_votes_major_percent ~ total_cost + avg + poll, data = hist_mode
 ```
 
 
-```{r, warning = FALSE, echo = TRUE, eval = TRUE, results = "asis"}
-stargazer(mod_R2, type = 'latex')
+```{r, warning = FALSE, echo = FALSE}
+stargazer(mod_R2, type = 'text')
 
 ```
 
