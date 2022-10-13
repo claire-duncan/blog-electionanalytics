@@ -212,7 +212,11 @@ hist_model_D <- hist_model %>%
   filter(party == "DEM")
 
 mod_D2 <- lm(dem_votes_major_percent ~ total_cost + avg + poll, data = hist_model_D)
-stargazer(mod_D2, type = 'text')
+```
+
+
+```{r, warning = FALSE,echo=FALSE, results = "asis"}
+stargazer(mod_D2, type = 'latex')
 
 ```
 
@@ -222,7 +226,11 @@ hist_model_R <- hist_model %>%
   filter(party == "REP")
 
 mod_R2 <- lm(rep_votes_major_percent ~ total_cost + avg + poll, data = hist_model_R)
-stargazer(mod_R2, type = 'text')
+```
+
+
+```{r, warning = FALSE, echo = FALSE, results = "asis"}
+stargazer(mod_R2, type = 'latex')
 
 ```
 
@@ -267,6 +275,7 @@ mean(predREP, na.rm = TRUE)
 
 
 
-References
-Hill, SJ, Lo, J., Vavreck, L., & Zaller, J. (2013). How Quickly We Forget: The Duration of Persuasion Effects From Mass Communication. Political Communication, 30(4), 521-547. http://dx.doi.org/10.1080/10584609.2013.828143 Retrieved from https://escholarship.org/uc/item/6g9321sd
+*References*
+Hill, SJ, Lo, J., Vavreck, L., & Zaller, J. (2013). How Quickly We Forget: The Duration of Persuasion Effects From Mass Communication. Political Communication, 30(4), 521-547. http://dx.doi.org/10.1080/10584609.2013.828143
+Retrieved from https://escholarship.org/uc/item/6g9321sd
 
