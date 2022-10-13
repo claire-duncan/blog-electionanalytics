@@ -160,10 +160,10 @@ combo_R_WD <- combo_R %>%
 combo_R_WR <- combo_R %>%
   filter(WinnerParty == "R")
 
-RWDlm <- lm(DemVotesMajorPercent ~ total_cost, data = combo_R_WD)
+RWDlm <- lm(RepVotesMajorPercent ~ total_cost, data = combo_R_WD)
 stargazer(RWDlm, type = 'text')
 
-RWRlm <- lm(DemVotesMajorPercent ~ total_cost, data = combo_R_WR)
+RWRlm <- lm(RepVotesMajorPercent ~ total_cost, data = combo_R_WR)
 stargazer(RWRlm, type = 'text')
 
 
@@ -204,7 +204,7 @@ hist_model <- ad_issues18 %>%
 
 
 Building on my prediction model as usual, I joined this advertising data with the data set I’ve been editing over the last few weeks including polling and expert predictions, in order to try to build a better model.
-However I kept out incumbency because of continuous data and coding problems. My model today also uses 2018 ad spending data as a stand-in for 2022, given the lack of current data available to me. With all those considerations, my model currently predicts that Democrats would have a vote share of 50.464% and Republicans would have a vote share of 49.915%, basically predicting a tie for the election.
+However I kept out incumbency because of continuous data and coding problems. My model today also uses 2018 ad spending data as a stand-in for 2022, given the lack of current data available to me. The linear model for Democrats again demonstrates a total lack of correlation between ad spending and vote share, with the experts' ratings the most predictive (correlation = -2.621). Overall, the adjusted R^2 was 0.771, which does demonstrate a strong predictive model. The same lack of correlation in ad spending was seen with Republican vote share, while experts’ ratings once again were statistically significant and had a slightly stronger correlation than in the Democrats’ vote share (correlation = 3.278). The adjusted R^2 was 0.740.
 
 
 ```{r, warning = FALSE,echo=FALSE}
@@ -226,6 +226,7 @@ stargazer(mod_R2, type = 'text')
 
 ```
 
+With all those considerations, my model currently predicts that Democrats would have a vote share of 50.464% and Republicans would have a vote share of 49.915%, basically predicting a tie for the election.
 
 ```{r, show_col_types = FALSE,  warning = FALSE, echo = FALSE, message=FALSE}
 
@@ -259,7 +260,7 @@ predREP <- predict(mod_R2, newdata = model_data_REP)
 #summary(predREP)
 
 subsetR <- (predREP > 50)
-summary(subsetR)
+#summary(subsetR)
 
 mean(predREP, na.rm = TRUE)
 ```
