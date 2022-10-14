@@ -6,7 +6,16 @@
     <description>Recent content in Posts on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 08 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 13 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog Post 6: The Ground Game</title>
+      <link>http://example.org/post/2022-10-13-blog-post-6-turnout/</link>
+      <pubDate>Thu, 13 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/2022-10-13-blog-post-6-turnout/</guid>
+      <description> cvap &amp;lt;- read.csv(&amp;quot;/Users/claireduncan/Downloads/polls_cvap_vp_df.csv&amp;quot;) </description>
+    </item>
+    
     <item>
       <title>Blog Post 5: The Air Game</title>
       <link>http://example.org/post/2022-10-08-blog-post-5-the-air-game/</link>

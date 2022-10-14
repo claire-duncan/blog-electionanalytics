@@ -212,13 +212,10 @@ hist_model_D <- hist_model %>%
   filter(party == "DEM")
 
 mod_D2 <- lm(dem_votes_major_percent ~ total_cost + avg + poll, data = hist_model_D)
-```
-
-
-```{r, warning = FALSE,echo=FALSE}
 stargazer(mod_D2, type = 'text')
 
 ```
+
 
 
 ```{r, warning = FALSE, echo = FALSE}
@@ -226,13 +223,9 @@ hist_model_R <- hist_model %>%
   filter(party == "REP")
 
 mod_R2 <- lm(rep_votes_major_percent ~ total_cost + avg + poll, data = hist_model_R)
-```
-
-
-```{r, warning = FALSE, echo = FALSE}
 stargazer(mod_R2, type = 'text')
-
 ```
+
 
 With all those considerations, my model currently predicts that Democrats would have a vote share of 50.464% and Republicans would have a vote share of 49.908%, basically predicting a tie for the election.
 
