@@ -33,10 +33,9 @@ historical <- read_csv("/Users/claireduncan/Downloads/house party vote share by 
 ```
 
 ```{r,  include = FALSE, show_col_types = FALSE, message = FALSE, echo=FALSE}
-dem_2018 <- historical %>% 
+historical <- historical %>% 
   select(race_year, state, area, dem_votes_major_percent, rep_votes_major_percent, rep_votes, dem_votes, rep_status, dem_status, winner_party) %>% 
-  rename("year" = "race_year") %>% 
-  filter(year == 2018) %>%
+  rename("year" = "race_year") %>%
   separate(area, into = c("area", "district"), sep = " ") %>% 
   select(-area) %>% 
   mutate(district = case_when(
@@ -44,15 +43,21 @@ dem_2018 <- historical %>%
     TRUE ~ district
   ))
 
-dem_2018$district[is.na(dem_2018$district)] = 1
+historical$district[is.na(historical$district)] = 1
 
-dem_2018 <- dem_2018 %>%
+historical <- historical %>%
    mutate(district = case_when(
     district == "AL" ~ "1",
     TRUE ~ district
   ))
 
-dem_2018$district <- as.numeric(dem_2018$district)
+historical$district <- as.numeric(historical$district)
+
+write.csv(historical, "/Users/claireduncan/Downloads/06-Ground Game (10-13)/historical.csv")
+
+
+dem_2018 <- historical %>%
+  filter(year == 2018)
 
 ```
 
@@ -92,6 +97,13 @@ district2 <- district2 %>%
   ))
 
 
+newdata <- district2 %>%
+  left_join(historical, by = c("state", "district"))
+
+```
+
+
+```{r,  include = FALSE, show_col_types = FALSE, message = FALSE, echo=FALSE}
 alldata <- district2 %>%
   left_join(dem_2018, by = c("state", "district"))
 
@@ -140,6 +152,7 @@ experts$district <- as.numeric(experts$district)
 comp <- experts %>%
   left_join(simpdata, by = c("st", "district")) %>% 
   st_as_sf()
+
 ```
 
 

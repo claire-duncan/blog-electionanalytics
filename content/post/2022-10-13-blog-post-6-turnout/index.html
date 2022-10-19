@@ -1,0 +1,156 @@
+---
+title: 'Blog Post 6: The Ground Game'
+author: Claire Duncan
+date: '2022-10-13'
+slug: []
+categories: []
+tags: []
+summary: This week in Election Analytics we looked at the effect of turnout on vote share, given what we discussed about the ground game of a campaign — how campaigns try to mobilize and persuade voters by direct contact. While these methods have changed slightly with technological advancements, canvassing and phonebanking are at the heart of the ground game. Research demonstrates that ground campaigns may not have a large perusasion effect but they can mobilize and turn out voters (Enos and Fowler (2016)). 
+---
+
+
+
+<p>First, I created the variable for turnout, dividing the combined votes for Democrats and Republicans by the citizen voting age population (CVAP). The CVAP data available to us is from 2012-2020. Comparing turnout to vote share, there is almost a null relationship to note. For Democratic vote share, the correlation is 0.002, indicating that turnout has an extremely weak positive effect on votes. The adjusted R^2 is -0.003, demonstrating the model has such low predictive power that the average is more predictive. For Republican vote share, the correlation was the exact inverse of the Democratic model, at -0.002. The adjusted R^2 was also -0.003. This is interesting given the inverse relationship, although that makes sense as the model is just using two party vote share as the independent variable and the turnout is the same for each party.</p>
+<p>When I subset the data to only include midterm years - 2014 and 2018 - the relationship between vote share and turnout becomes slightly stronger but not by much. The correlation for Democratic vote share is 0.092, so for Democrats, an increase in turnout by about 1% is associated with an increase in vote share by about 0.1%. The R^2 also did increase but only to 0.025. The correlation for Republican vote share is -0.092, showing the same inverse relationship as seen when using data from all election years.</p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## turnout                        0.002           
+##                               (0.025)          
+##                                                
+## Constant                     48.635***         
+##                               (1.436)          
+##                                                
+## -----------------------------------------------
+## Observations                    395            
+## R2                            0.00001          
+## Adjusted R2                   -0.003           
+## Residual Std. Error      5.967 (df = 393)      
+## F Statistic             0.005 (df = 1; 393)    
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## turnout                       0.092**          
+##                               (0.040)          
+##                                                
+## Constant                     44.603***         
+##                               (1.995)          
+##                                                
+## -----------------------------------------------
+## Observations                    168            
+## R2                             0.031           
+## Adjusted R2                    0.025           
+## Residual Std. Error      5.293 (df = 166)      
+## F Statistic            5.251** (df = 1; 166)   
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## turnout                       -0.002           
+##                               (0.025)          
+##                                                
+## Constant                     51.365***         
+##                               (1.436)          
+##                                                
+## -----------------------------------------------
+## Observations                    395            
+## R2                            0.00001          
+## Adjusted R2                   -0.003           
+## Residual Std. Error      5.967 (df = 393)      
+## F Statistic             0.005 (df = 1; 393)    
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## turnout                      -0.092**          
+##                               (0.040)          
+##                                                
+## Constant                     55.397***         
+##                               (1.995)          
+##                                                
+## -----------------------------------------------
+## Observations                    168            
+## R2                             0.031           
+## Adjusted R2                    0.025           
+## Residual Std. Error      5.293 (df = 166)      
+## F Statistic            5.251** (df = 1; 166)   
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>To continue making my predictive model, I added incumbency and expert predictions to my data. Interestingly, incumbency did not hold as a strong predictor for Democratic (correlation of 0.108) or Republican vote share, even having a weak negative correlation with Republican vote share (correlation -0.108). This may be a marker that incumbents and those of the president’s party are punished at the ballot box during midterm years.</p>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       dem_votes_major_percent  
+## -----------------------------------------------
+## incumbency                     0.108           
+##                               (0.458)          
+##                                                
+## avg_rating                   -2.662***         
+##                               (0.112)          
+##                                                
+## turnout                      0.105***          
+##                               (0.019)          
+##                                                
+## Constant                     55.544***         
+##                               (1.118)          
+##                                                
+## -----------------------------------------------
+## Observations                    168            
+## R2                             0.782           
+## Adjusted R2                    0.778           
+## Residual Std. Error      2.526 (df = 164)      
+## F Statistic          195.932*** (df = 3; 164)  
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre><code>## [1] 48.61066</code></pre>
+<pre><code>## [1] 56.14127</code></pre>
+<pre><code>## [1] 51.97428</code></pre>
+<pre><code>## 
+## ===============================================
+##                         Dependent variable:    
+##                     ---------------------------
+##                       rep_votes_major_percent  
+## -----------------------------------------------
+## incumbency                    -0.108           
+##                               (0.458)          
+##                                                
+## avg_rating                   2.662***          
+##                               (0.112)          
+##                                                
+## turnout                      -0.105***         
+##                               (0.019)          
+##                                                
+## Constant                     44.456***         
+##                               (1.118)          
+##                                                
+## -----------------------------------------------
+## Observations                    168            
+## R2                             0.782           
+## Adjusted R2                    0.778           
+## Residual Std. Error      2.526 (df = 164)      
+## F Statistic          195.932*** (df = 3; 164)  
+## ===============================================
+## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code>prob_R_lm &lt;- predict(R_lm, newdata = 
+                           data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 0), type=&quot;response&quot;)[[1]]
+prob_R_lm</code></pre>
+<pre><code>## [1] 48.13327</code></pre>
+<p>For the 2022 data, I averaged the turnout from the 2014 and 2018 midterms, which was 48.61%. Just to compare, the average turnout rate for all the data was 56.14%, demonstrating the significant drop in turnout that occurs during midterm years. For the expert rating, I pulled the Generic Ballot from 538 on October 18, 2022, which was 45.4% for Democrats and 44.9% for Republicans. For incumbency, I used the president’s party as a proxy, so 1 for Democrats and 0 for Republicans.</p>
+<p>With this data, my model predicts Democrats will win 51.97% of the vote share and Republicans will win 48.13%.</p>

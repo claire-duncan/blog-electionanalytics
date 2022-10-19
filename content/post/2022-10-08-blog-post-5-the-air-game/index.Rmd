@@ -27,6 +27,7 @@ library(tigris)
 library(leaflet)
 library(dplyr)
 library(scales)
+library(kableExtra)
 
 ```
 
@@ -224,6 +225,7 @@ hist_model_R <- hist_model %>%
 
 mod_R2 <- lm(rep_votes_major_percent ~ total_cost + avg + poll, data = hist_model_R)
 stargazer(mod_R2, type = 'text')
+
 ```
 
 

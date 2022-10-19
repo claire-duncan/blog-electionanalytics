@@ -1,0 +1,174 @@
+---
+title: 'Blog Post 6: The Ground Game'
+author: Claire Duncan
+date: '2022-10-13'
+slug: []
+categories: []
+tags: []
+summary: This week in Election Analytics we looked at the effect of turnout on vote share, given what we discussed about the ground game of a campaign — how campaigns try to mobilize and persuade voters by direct contact. While these methods have changed slightly with technological advancements, canvassing and phonebanking are at the heart of the ground game. Research demonstrates that ground campaigns may not have a large perusasion effect but they can mobilize and turn out voters (Enos and Fowler (2016)). 
+---
+
+```{r, include = FALSE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(tigris)
+library(leaflet)
+library(dplyr)
+library(scales)
+library(kableExtra)
+
+```
+
+```{r, show_col_types = FALSE, include = FALSE}
+cvap <- read.csv("/Users/claireduncan/Downloads/polls_cvap_vp_df2.csv")
+cvap_district <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/Section data/cvap_district_2012-2020_clean.csv")
+polls_df <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/Section data/house_polls_long.csv")
+
+historical <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/historical.csv") %>%
+  clean_names()
+
+experts <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/expert_rating.csv")
+```
+
+```{r, echo = FALSE, include = FALSE, warning = FALSE}
+cvap <- cvap %>%
+  mutate(DEM = as.numeric(DEM), REP = as.numeric(REP))
+
+polls_df <- polls_df %>%
+  mutate(DEM = as.numeric(DEM), REP = as.numeric(REP))
+
+cvap_district <- cvap_district %>%
+  select(-c(...1, ...2, moe)) %>%
+  rename(st_cd_fips = geoid) %>%
+  rename(district = cd)
+  
+cvap_district <- cvap_district %>%
+   mutate(district = case_when(
+    district == "AL" ~ "1",
+    TRUE ~ district
+  ))
+
+cvap_district$district <- as.numeric(cvap_district$district)
+
+
+cvap <- cvap %>%
+  mutate(turnout = ((DemVotes + RepVotes)/cvap)*100)
+
+cvap <- cvap %>%
+  mutate(incumbency = case_when(DemStatus == "Incumbent" ~ 1,
+                                RepStatus == "Incumbent" ~ 1,
+                                DemStatus == 'Challenger' ~ 0,
+                                RepStatus == 'Challenger' ~ 0))
+
+cvap$cd <- as.numeric(cvap$cd)
+
+cvap_clean <- cvap %>%
+  select(year, state.x, cd, DEM, REP, cvap, winner_party, DemVotes, RepVotes, RepStatus, DemStatus, RepVotesMajorPercent, DemVotesMajorPercent, president_party, turnout, incumbency) %>%
+  rename(state = state.x) %>%
+  rename(district = cd)
+
+experts <- experts %>%
+  select(year, state, district, avg_rating)
+
+experts <- experts %>%
+   mutate(district = case_when(
+    district == "AL" ~ "1",
+    TRUE ~ district
+  ))
+
+experts$district <- as.numeric(experts$district)
+
+```
+
+
+```{r, echo = FALSE, include = FALSE, warning = FALSE}
+combined <- cvap_district %>%
+  left_join(historical, by = c("year", "state", "district")) %>%
+  drop_na()
+
+combined1 <- combined %>%
+  left_join(experts, by = c("year", "state", "district")) %>%
+  drop_na()
+
+combined2 <- merge(cvap_district, cvap_clean, by = c("year", "state", "district"))
+
+```
+
+
+```{r, echo = FALSE, include = FALSE, warning = FALSE}
+combined1 <- combined1 %>%
+  mutate(turnout = ((dem_votes + rep_votes)/cvap)*100)
+
+
+combined1 <- combined1 %>%
+  mutate(incumbency = case_when(dem_status == "Incumbent" ~ 1,
+                                rep_status == "Incumbent" ~ 1,
+                                dem_status == 'Challenger' ~ 0,
+                                rep_status == 'Challenger' ~ 0))
+
+combined_midterm <- combined1 %>%
+  filter(year == 2014 | year == 2018)
+```
+First, I created the variable for turnout, dividing the combined votes for Democrats and Republicans by the citizen voting age population (CVAP). The CVAP data available to us is from 2012-2020. Comparing turnout to vote share, there is almost a null relationship to note. For Democratic vote share, the correlation is 0.002, indicating that turnout has an extremely weak positive effect on votes. The adjusted R^2 is -0.003, demonstrating the model has such low predictive power that the average is more predictive. For Republican vote share, the correlation was the exact inverse of the Democratic model, at -0.002. The adjusted R^2 was also -0.003. This is interesting given the inverse relationship, although that makes sense as the model is just using two party vote share as the independent variable and the turnout is the same for each party. 
+
+
+When I subset the data to only include midterm years - 2014 and 2018 - the relationship between vote share and turnout becomes slightly stronger but not by much. The correlation for Democratic vote share is 0.092, so for Democrats, an increase in turnout by about 1% is associated with an increase in vote share by about 0.1%. The R^2 also did increase but only to 0.025. The correlation for Republican vote share is -0.092, showing the same inverse relationship as seen when using data from all election years.
+
+```{r, echo = FALSE, warning = FALSE}
+#turnout 
+Dcvap_lm <- lm(dem_votes_major_percent ~ turnout, data = combined1)
+Dcvap_midterm_lm <- lm(dem_votes_major_percent ~ turnout, data = combined_midterm)
+stargazer(Dcvap_lm, type='text')
+stargazer(Dcvap_midterm_lm, type='text')
+
+Rcvap_lm <- lm(rep_votes_major_percent ~ turnout, data = combined1)
+Rcvap_midterm_lm <- lm(rep_votes_major_percent ~ turnout, data = combined_midterm)
+stargazer(Rcvap_lm, type='text')
+stargazer(Rcvap_midterm_lm, type='text')
+
+```
+
+To continue making my predictive model, I added incumbency and expert predictions to my data. Interestingly, incumbency did not hold as a strong predictor for Democratic (correlation of 0.108) or Republican vote share, even having a weak negative correlation with Republican vote share (correlation -0.108). This may be a marker that incumbents and those of the president’s party are punished at the ballot box during midterm years. 
+
+```{r, warning = FALSE, echo = FALSE}
+
+D_lm <- lm(dem_votes_major_percent ~ incumbency + avg_rating + turnout, data = combined_midterm)
+stargazer(D_lm, type='text')
+
+```
+
+```{r, echo = FALSE, warning = FALSE}
+mean(combined_midterm$turnout, na.rm =TRUE)
+mean(combined1$turnout, na.rm =TRUE)
+
+```
+
+```{r, echo = FALSE, warning = FALSE}
+prob_D_lm <- predict(D_lm, newdata = 
+                           data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 1), type="response")[[1]]
+prob_D_lm
+```
+
+```{r, echo = FALSE, warning = FALSE}
+R_lm <- lm(rep_votes_major_percent ~ incumbency + avg_rating + turnout, data = combined_midterm)
+stargazer(R_lm, type = 'text')
+```
+
+```{r}
+prob_R_lm <- predict(R_lm, newdata = 
+                           data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 0), type="response")[[1]]
+prob_R_lm
+
+```
+
+For the 2022 data, I averaged the turnout from the 2014 and 2018 midterms, which was 48.61%. Just to compare, the average turnout rate for all the data was 56.14%, demonstrating the significant drop in turnout that occurs during midterm years. For the expert rating, I pulled the Generic Ballot from 538 on October 18, 2022, which was 45.4% for Democrats and 44.9% for Republicans. For incumbency, I used the president's party as a proxy, so 1 for Democrats and 0 for Republicans.
+
+With this data, my model predicts Democrats will win 51.97% of the vote share and Republicans will win 48.13%.
