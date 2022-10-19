@@ -162,7 +162,7 @@ R_lm <- lm(rep_votes_major_percent ~ incumbency + avg_rating + turnout, data = c
 stargazer(R_lm, type = 'text')
 ```
 
-```{r}
+```{r, echo = FALSE, warning = FALSE}
 prob_R_lm <- predict(R_lm, newdata = 
                            data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 0), type="response")[[1]]
 prob_R_lm
@@ -172,3 +172,45 @@ prob_R_lm
 For the 2022 data, I averaged the turnout from the 2014 and 2018 midterms, which was 48.61%. Just to compare, the average turnout rate for all the data was 56.14%, demonstrating the significant drop in turnout that occurs during midterm years. For the expert rating, I pulled the Generic Ballot from 538 on October 18, 2022, which was 45.4% for Democrats and 44.9% for Republicans. For incumbency, I used the president's party as a proxy, so 1 for Democrats and 0 for Republicans.
 
 With this data, my model predicts Democrats will win 51.97% of the vote share and Republicans will win 48.13%.
+
+
+
+I also created a binomial logical prediction for my model, using the same variables: incumbency, turnout, and expert rating. The p values for the variables in both models are all less than 0.05, indicating that they are statistically significant predictor variables. McFadden's R^2 values (0.939 for Republican vote share and 0.917 for Democratic vote share) were both very high which would indicate that the model fits the data pretty well. However, the coefficient estimates are very low, indicating small and weak relationships. Creating a prediction, the Democratic probability was 0.248 and the Republican probability was 0.23, meaning that there is some likelihood of Democrats winning the two party vote share.
+
+```{r, warning = FALSE, echo = FALSE}
+R_glm <- glm(cbind(rep_votes, cvap-rep_votes) ~ 
+                  avg_rating + incumbency + turnout, combined1, family = binomial)
+summary(R_glm)
+
+with(summary(R_glm), 1 - deviance/null.deviance)
+
+```
+
+
+```{r, warning = FALSE, echo = FALSE}
+prob_R_glm <- predict(R_glm, newdata = 
+                           data.frame(avg_rating=3.3, turnout = 48.61, incumbency = 0), type="response")[[1]]
+prob_R_glm
+```
+
+
+```{r, warning = FALSE, echo = FALSE}
+D_glm <- glm(cbind(dem_votes, cvap-dem_votes) ~ 
+                  avg_rating + incumbency + turnout, combined1, family = binomial)
+summary(D_glm)
+
+with(summary(D_glm), 1 - deviance/null.deviance)
+```
+
+```{r, warning = FALSE, echo = FALSE}
+prob_D_glm <- predict(D_glm, newdata = 
+                           data.frame(avg_rating=3.3, turnout = 48.61, incumbency = 1), type="response")[[1]]
+prob_D_glm
+
+```
+
+Overall, these models and correlations demonstrate that there does not appear to be a clear relationship between turnout and vote share, for either Democrats or Republicans. However, given the sample size of just two years of midterms, and some lack of data for different districts within those years, this may be in part due to the data errors. This also may be because both campaigns run strong canvassing operations, almost nullifying the effect across one another. Given the significant increase in turnout in the 2018 midterm as a response to Trump’s 2020 election, that may also have skewed the data, so it will be interesting to see what occurs this cycle.
+
+
+*References*:
+Enos, R., & Fowler, A. (2018). Aggregate Effects of Large-Scale Campaigns on Voter Turnout. Political Science Research and Methods, 6(4), 733-751. doi:10.1017/psrm.2016.21

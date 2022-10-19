@@ -202,12 +202,67 @@
 ## F Statistic          195.932*** (df = 3; 164)  
 ## ===============================================
 ## Note:               *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
-<pre class="r"><code>prob_R_lm &lt;- predict(R_lm, newdata = 
-                           data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 0), type=&quot;response&quot;)[[1]]
-prob_R_lm</code></pre>
 <pre><code>## [1] 48.13327</code></pre>
 <p>For the 2022 data, I averaged the turnout from the 2014 and 2018 midterms, which was 48.61%. Just to compare, the average turnout rate for all the data was 56.14%, demonstrating the significant drop in turnout that occurs during midterm years. For the expert rating, I pulled the Generic Ballot from 538 on October 18, 2022, which was 45.4% for Democrats and 44.9% for Republicans. For incumbency, I used the president’s party as a proxy, so 1 for Democrats and 0 for Republicans.</p>
 <p>With this data, my model predicts Democrats will win 51.97% of the vote share and Republicans will win 48.13%.</p>
+<p>I also created a binomial logical prediction for my model, using the same variables: incumbency, turnout, and expert rating. The p values for the variables in both models are all less than 0.05, indicating that they are statistically significant predictor variables. McFadden’s R^2 values (0.939 for Republican vote share and 0.917 for Democratic vote share) were both very high which would indicate that the model fits the data pretty well. However, the coefficient estimates are very low, indicating small and weak relationships. Creating a prediction, the Democratic probability was 0.248 and the Republican probability was 0.23, meaning that there is some likelihood of Democrats winning the two party vote share.</p>
+<pre><code>## 
+## Call:
+## glm(formula = cbind(rep_votes, cvap - rep_votes) ~ avg_rating + 
+##     incumbency + turnout, family = binomial, data = combined1)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -170.884   -14.698     0.269    16.738   121.941  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -2.817e+00  9.582e-04 -2939.9   &lt;2e-16 ***
+## avg_rating   8.406e-02  8.866e-05   948.2   &lt;2e-16 ***
+## incumbency  -1.370e-02  3.715e-04   -36.9   &lt;2e-16 ***
+## turnout      2.739e-02  1.379e-05  1985.6   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 5045262  on 394  degrees of freedom
+## Residual deviance:  305106  on 391  degrees of freedom
+## AIC: 310406
+## 
+## Number of Fisher Scoring iterations: 3</code></pre>
+<pre><code>## [1] 0.9395263</code></pre>
+<pre><code>## [1] 0.2300117</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = cbind(dem_votes, cvap - dem_votes) ~ avg_rating + 
+##     incumbency + turnout, family = binomial, data = combined1)
+## 
+## Deviance Residuals: 
+##      Min        1Q    Median        3Q       Max  
+## -140.415   -20.022    -0.674    20.496   153.812  
+## 
+## Coefficients:
+##               Estimate Std. Error   z value Pr(&gt;|z|)    
+## (Intercept) -2.020e+00  9.382e-04 -2153.554   &lt;2e-16 ***
+## avg_rating  -8.030e-02  8.884e-05  -903.909   &lt;2e-16 ***
+## incumbency   8.830e-04  3.780e-04     2.336   0.0195 *  
+## turnout      2.424e-02  1.375e-05  1763.036   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 4847834  on 394  degrees of freedom
+## Residual deviance:  402277  on 391  degrees of freedom
+## AIC: 407565
+## 
+## Number of Fisher Scoring iterations: 3</code></pre>
+<pre><code>## [1] 0.9170192</code></pre>
+<pre><code>## [1] 0.2486253</code></pre>
+<p>Overall, these models and correlations demonstrate that there does not appear to be a clear relationship between turnout and vote share, for either Democrats or Republicans. However, given the sample size of just two years of midterms, and some lack of data for different districts within those years, this may be in part due to the data errors. This also may be because both campaigns run strong canvassing operations, almost nullifying the effect across one another. Given the significant increase in turnout in the 2018 midterm as a response to Trump’s 2020 election, that may also have skewed the data, so it will be interesting to see what occurs this cycle.</p>
+<p><em>References</em>:
+Enos, R., &amp; Fowler, A. (2018). Aggregate Effects of Large-Scale Campaigns on Voter Turnout. Political Science Research and Methods, 6(4), 733-751. <a href="doi:10.1017/psrm.2016.21" class="uri">doi:10.1017/psrm.2016.21</a></p>
 
 
 		
@@ -224,7 +279,7 @@ prob_R_lm</code></pre>
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-10-18 22:29:14.702234 -0400 EDT m=&#43;0.305443233">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-10-19 13:47:05.697772 -0400 EDT m=&#43;0.327190322">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
