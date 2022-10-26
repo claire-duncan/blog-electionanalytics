@@ -47,7 +47,7 @@ pvdistrict_df <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/
 
 I chose gas prices as a shock of this year that I could try to quantify in order to test the relationship with support for Democrats or Republicans. The data I looked at took the nationwide average price of gas in dollars per gallon for each week of the year.
 
-```{r, show_col_types = FALSE,warning = FALSE, message = FALSE, include = FALSE}
+```{r, show_col_types = FALSE, warning = FALSE, message = FALSE, include = FALSE}
 gas <- read_csv("/Users/claireduncan/Downloads/07 - Shocks (10:20)/Gas_prices_weekly.csv")
 
 gas_week <- gas %>%
@@ -66,7 +66,7 @@ gas_week$avg_change[is.na(gas_week$avg_change)] <- 0
 When considering how to quantify gas prices as a shock, I looked at both the average price of gas per week in the US and then the percent change in gas price from week to week, comparing one week to the previous week. This graph shows that percent change, demonstrating the significant increase around week 20. That was when the gas prices hit a record high in June - averaging about $5 nationwide; before the average fell for 98 straight days, dropping to around $3.5 per gallon, which is demonstrated by the negative percent changes during that time frame. The decrease after the large peak increase starts around week 24 which was mid June of this year.
 
 
-```{r, show_col_types = FALSE,warning = FALSE, message = FALSE}
+```{r, show_col_types = FALSE, warning = FALSE, message = FALSE}
 gas_week %>%
   ggplot(aes(x=week, y=avg_change)) +
   geom_point(color="blue") + 
@@ -74,8 +74,6 @@ gas_week %>%
   labs(x= "Week of Year", y="Percentage Change in Gas Prices \n(from previous week)", title = "2022 Percent Change in Gas Prices (Week to Week)") + scale_y_continuous(limits=c(-5,5))
 
 ```
-
-Then I created a graph using the NYT scrape of the term “gas prices” in which the most articles per week were written in early March, with other peaks in mid to late June. Noted on here are the greatest and lowest data points from the previous slide indicating increases and decreases in price change by week. It’s clear that when gas prices first increased significantly, there were the most articles written about that change. 
 
 Using the generic ballot data we have, I ran correlations between gas price and support for Democrats and Republicans. Only looking at the weekly price of gas, an increase in dollar per gallon was associated with a very small increase in support for both Democrats and Republicans although this was only statistically significant for Republican generic ballot support. 
 
