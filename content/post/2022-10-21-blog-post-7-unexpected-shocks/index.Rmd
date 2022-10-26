@@ -47,7 +47,7 @@ pvdistrict_df <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/
 
 I chose gas prices as a shock of this year that I could try to quantify in order to test the relationship with support for Democrats or Republicans. The data I looked at took the nationwide average price of gas in dollars per gallon for each week of the year.
 
-```{r, show_col_types = FALSE,warning = FALSE, message = FALSE}
+```{r, show_col_types = FALSE,warning = FALSE, message = FALSE, include = FALSE}
 gas <- read_csv("/Users/claireduncan/Downloads/07 - Shocks (10:20)/Gas_prices_weekly.csv")
 
 gas_week <- gas %>%
@@ -154,7 +154,7 @@ gas_comp_Rep <- gas_comp %>%
 ```
 
 
-```{r, show_col_types = FALSE, warning = FALSE}
+```{r, show_col_types = FALSE, warning = FALSE, echo = FALSE}
 gas_Dem <- lm(avg_support ~ avg_gasprice, data = gas_comp_Dem)
 stargazer(gas_Dem, type='text')
 
@@ -173,7 +173,7 @@ stargazer(gas_Rep2, type='text')
 
 The graph below shows the generic ballot averages over 2022, with the greatest increase and decrease in percent change noted.
 
-```{r}
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
 
 polls_df %>%
   group_by(candidate == 'Democrats') %>%
@@ -195,7 +195,7 @@ polls_df %>%
 
 While gas prices as a shock could also be considered an economic factor, I wanted to include them in my model just to determine if they would make a difference at all. From the weekly gas price data, I used the maximum and minimum values of change in gas prices within a given year as my measurement, in order to try to capture what might be the most shocking value, or a value that could impact voter behavior. For this, maximum values are positive changes (increases) in gas prices, and minimum values are negative changes (decreases) in gas prices.
 
-```{r, warning = FALSE}
+```{r, warning = FALSE, echo = FALSE, include = FALSE, message = FALSE}
 gas <- gas %>%
   mutate(date = mdy(date)) %>%
   mutate(year = substr(date, 1, 4)) %>%
@@ -234,7 +234,7 @@ gasall <- gas2 %>%
 gasall$year <- as.numeric(gasall$year)
 ```
 
-```{r}
+```{r, include = FALSE, message = FALSE, echo = FALSE, warning = FALSE, show_col_types = FALSE}
 combineddata <- read_csv("/Users/claireduncan/Downloads/combineddata.csv")
 
 dat <- combineddata %>%
@@ -245,7 +245,7 @@ However, in the model I have been using, as it’s based solely on the 2014 and 
 I also ran two models for Republican vote share, given the same problem occurred. I think this is because of the data I am using.
 For the Republican vote percent, the positive change in gas prices was correlated with a 13.177 increase in vote, inverse of the Democratic vote relationship, which was statistically significant. The correlation between Republican vote share and minimum change was -0.961, indicating that smaller gas price changes had a negative effect on voting for Republicans, which was statistically significant.
 
-```{r, warning = FALSE}
+```{r, message = FALSE, echo = FALSE, warning = FALSE}
 
 D_lm_max <- lm(dem_votes_major_percent ~ maxchange + incumbency + avg_rating + turnout, data = dat)
 stargazer(D_lm_max, type='text')
@@ -265,7 +265,7 @@ prob_D_lm_min
 ```
 
 
-```{r, warning = FALSE}
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
 R_lm_max <- lm(rep_votes_major_percent ~ maxchange + incumbency + avg_rating + turnout, data = dat)
 stargazer(R_lm_max, type='text')
 
