@@ -42,19 +42,25 @@ experts <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/expert
 cvap <- cvap %>%
   mutate(DEM = as.numeric(DEM), REP = as.numeric(REP))
 
+cvap <- cvap %>% drop_na(DEM, REP)
+
 polls_df <- polls_df %>%
   mutate(DEM = as.numeric(DEM), REP = as.numeric(REP))
 
+polls_df <- polls_df %>% drop_na(DEM, REP)
+
 cvap_district <- cvap_district %>%
-  select(-c(...1, ...2, moe)) %>%
-  rename(st_cd_fips = geoid) %>%
-  rename(district = cd)
+  select(-c(...1, ...2, moe))
   
+colnames(cvap_district)[1] ="st_cd_fips"
+colnames(cvap_district)[2] ="district"
+
 cvap_district <- cvap_district %>%
    mutate(district = case_when(
     district == "AL" ~ "1",
     TRUE ~ district
   ))
+
 
 cvap_district$district <- as.numeric(cvap_district$district)
 
@@ -71,9 +77,12 @@ cvap <- cvap %>%
 cvap$cd <- as.numeric(cvap$cd)
 
 cvap_clean <- cvap %>%
-  select(year, state.x, cd, DEM, REP, cvap, winner_party, DemVotes, RepVotes, RepStatus, DemStatus, RepVotesMajorPercent, DemVotesMajorPercent, president_party, turnout, incumbency) %>%
-  rename(state = state.x) %>%
-  rename(district = cd)
+  select(year, state.x, cd, DEM, REP, cvap, winner_party, DemVotes, RepVotes, RepStatus, DemStatus, RepVotesMajorPercent, DemVotesMajorPercent, president_party, turnout, incumbency)
+ 
+
+colnames(cvap_clean)[2] ="state"
+colnames(cvap_clean)[3] ="district"
+
 
 experts <- experts %>%
   select(year, state, district, avg_rating)
@@ -116,6 +125,8 @@ combined1 <- combined1 %>%
 
 combined_midterm <- combined1 %>%
   filter(year == 2014 | year == 2018)
+
+write_csv(combined_midterm, "/Users/claireduncan/Downloads/combineddata.csv")
 ```
 First, I created the variable for turnout, dividing the combined votes for Democrats and Republicans by the citizen voting age population (CVAP). The CVAP data available to us is from 2012-2020. Comparing turnout to vote share, there is almost a null relationship to note. For Democratic vote share, the correlation is 0.002, indicating that turnout has an extremely weak positive effect on votes. The adjusted R^2 is -0.003, demonstrating the model has such low predictive power that the average is more predictive. For Republican vote share, the correlation was the exact inverse of the Democratic model, at -0.002. The adjusted R^2 was also -0.003. This is interesting given the inverse relationship, although that makes sense as the model is just using two party vote share as the independent variable and the turnout is the same for each party. 
 
