@@ -1,0 +1,291 @@
+---
+title: 'Blog Post 7: Unexpected Shocks'
+author: Claire Duncan
+date: '2022-10-21'
+slug: []
+categories: []
+tags: []
+summary: This week in Election Analytics, we discussed the effect of shocks and unexpected events on elections. Shocks like "October Surprises" may seem in the moment to drastically change polling or forecasts, but may be less durable than expected. While some shocks can be connected to a logic of retrospection, in which voters hold incumbents responsible for a surprising event during an election year, others do not appear to be as closely connected to governance, such as shark attacks or football games.
+---
+
+```{r, include = FALSE, echo = FALSE, message = FALSE}
+
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(tigris)
+library(leaflet)
+library(dplyr)
+library(scales)
+library(kableExtra)
+library(cowplot)
+
+library(dotenv)
+library(jsonlite)
+library(lubridate)
+
+library(plyr)
+library(data.table)
+```
+
+```{r, include = FALSE, echo = FALSE, message = FALSE, show_col_types = FALSE}
+
+demog_df <- read_csv("/Users/claireduncan/Downloads/07 - Shocks (10:20)/section data/demographic data/demographic_2009_2020.csv")
+
+demog_df_2020 <- read_csv("/Users/claireduncan/Downloads/07 - Shocks (10:20)/section data/demographic data/demographic_2020.csv")
+
+demog_df_2009_2019 <- read_csv("/Users/claireduncan/Downloads/07 - Shocks (10:20)/section data/demographic data/demographic_2009_2019.csv")
+
+pvdistrict_df <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/Section data/incumb_dist_1948-2020 (3).csv")
+```
+
+I chose gas prices as a shock of this year that I could try to quantify in order to test the relationship with support for Democrats or Republicans. The data I looked at took the nationwide average price of gas in dollars per gallon for each week of the year.
+
+```{r, show_col_types = FALSE,warning = FALSE, message = FALSE}
+gas <- read_csv("/Users/claireduncan/Downloads/07 - Shocks (10:20)/Gas_prices_weekly.csv")
+
+gas_week <- gas %>%
+  mutate(date = mdy(date)) %>%
+  mutate(year = substr(date, 1, 4)) %>%
+  filter(year == 2022) %>%
+  mutate(week = strftime(date, format = "%V")) %>%
+  mutate(month = strftime(date, format = "%m")) %>%
+  mutate(avg_change = 100*
+           ((avg_gasprice - lag(avg_gasprice)) / (lag(avg_gasprice))))
+
+gas_week$avg_change[is.na(gas_week$avg_change)] <- 0
+
+```
+
+When considering how to quantify gas prices as a shock, I looked at both the average price of gas per week in the US and then the percent change in gas price from week to week, comparing one week to the previous week. This graph shows that percent change, demonstrating the significant increase around week 20. That was when the gas prices hit a record high in June - averaging about $5 nationwide; before the average fell for 98 straight days, dropping to around $3.5 per gallon, which is demonstrated by the negative percent changes during that time frame. The decrease after the large peak increase starts around week 24 which was mid June of this year.
+
+
+```{r, show_col_types = FALSE,warning = FALSE, message = FALSE}
+gas_week %>%
+  ggplot(aes(x=week, y=avg_change)) +
+  geom_point(color="blue") + 
+  theme_classic() + geom_hline(yintercept=0, color = "black", size=0.5) +
+  labs(x= "Week of Year", y="Percentage Change in Gas Prices \n(from previous week)", title = "2022 Percent Change in Gas Prices (Week to Week)") + scale_y_continuous(limits=c(-5,5))
+
+```
+
+Then I created a graph using the NYT scrape of the term “gas prices” in which the most articles per week were written in early March, with other peaks in mid to late June. Noted on here are the greatest and lowest data points from the previous slide indicating increases and decreases in price change by week. It’s clear that when gas prices first increased significantly, there were the most articles written about that change. 
+
+Using the generic ballot data we have, I ran correlations between gas price and support for Democrats and Republicans. Only looking at the weekly price of gas, an increase in dollar per gallon was associated with a very small increase in support for both Democrats and Republicans although this was only statistically significant for Republican generic ballot support. 
+
+Then, I looked at the average change in price, comparing each week to the previous week. I thought this might be a better indicator of how gas prices have been a “shock” considering how people make quick retrospective comparisons in how much they have to pay week to week. This measure was greater and more significant for both democratic and republican support. For Democrats, an increase in gas price change was correlated with a decrease in support of almost 1%. Meanwhile for Republicans, an increase in gas price change was correlated with an increase in support of 0.8%. This seems to be indicative of not only how Republicans have used gas prices to attack Democrats and fire up their base, but of how voters use the logic of retrospection - holding the incumbent Democrats responsible for the sharp increases in gas prices this summer.
+
+```{r, show_col_types = FALSE, warning = FALSE, include = FALSE, echo =FALSE}
+gb <- read_csv("/Users/claireduncan/Desktop/*gov 1347/Lab sessions/Lab Session 3 - Polling (9-22)/section data/538_generic_ballot_averages_2018-2022.csv")
+
+gb <- gb %>%
+  mutate(date_ = mdy(date)) %>%
+  mutate(year = substr(date_, 1, 4)) %>%
+  filter(year == 2022) %>%
+  mutate(week = strftime(date_, format = "%V")) %>%
+  mutate(month = strftime(date_, format = "%m"))
+
+#
+dem <- gb %>%
+   filter(candidate == 'Democrats')
+x <- plyr::ddply(dem, .(week), function(z) mean(z$pct_estimate))
+x$candidate <- c('Democrats')
+x$avg_dem <- x$V1
+x <- x %>%
+  select(-V1)
+x$avg_dem <-  round(x$avg_dem , digits = 1)
+#
+#
+rep <- gb %>%
+   filter(candidate == 'Republicans')
+y <- plyr::ddply(rep, .(week), function(z) mean(z$pct_estimate))
+ y$candidate <- c('Republicans')
+ y$avg_rep <- y$V1
+ 
+ y <- y %>%
+   select(-V1)
+y$avg_rep <-  round(y$avg_rep, digits = 1)
+#
+
+df_list <- list(gb, x, y)
+#
+
+polls_df <- df_list %>% reduce(full_join, by=c("candidate", "week"))
+#
+# # remove NAs
+polls_df[] <-  t(apply(polls_df, 1, function(x) c(x[!is.na(x)], x[is.na(x)])))
+#
+polls_df <- polls_df %>%
+   select(-avg_rep)
+
+polls_df$avg_support <- polls_df$avg_dem
+
+polls_df <- polls_df %>%
+  select(-avg_dem)
+#
+
+polls_df <- polls_df %>%
+  distinct(cycle, week, date_, avg_support, candidate) %>%
+  filter(week != 52)
+
+polls_df$date_ <- as.Date.character(polls_df$date_)
+
+
+gas_week2 <- gas_week %>%
+  select(week, avg_gasprice, avg_change)
+
+polls_df2 <- polls_df %>%
+  select(week, candidate, avg_support)
+
+gas_comp <- gas_week2 %>%
+  left_join(polls_df2, by = c("week"))
+
+gas_comp_Dem <- gas_comp %>%
+  filter(candidate == "Democrats")
+
+gas_comp_Rep <- gas_comp %>%
+  filter(candidate == "Republicans")
+```
+
+
+```{r, show_col_types = FALSE, warning = FALSE}
+gas_Dem <- lm(avg_support ~ avg_gasprice, data = gas_comp_Dem)
+stargazer(gas_Dem, type='text')
+
+gas_Dem2 <- lm(avg_support ~ avg_change, data = gas_comp_Dem)
+stargazer(gas_Dem2, type='text')
+
+
+gas_Rep <- lm(avg_support ~ avg_gasprice, data = gas_comp_Rep)
+stargazer(gas_Rep, type='text')
+
+
+gas_Rep2 <- lm(avg_support ~ avg_change, data = gas_comp_Rep)
+stargazer(gas_Rep2, type='text')
+
+```
+
+The graph below shows the generic ballot averages over 2022, with the greatest increase and decrease in percent change noted.
+
+```{r}
+
+polls_df %>%
+  group_by(candidate == 'Democrats') %>%
+  mutate(date_ = as.Date(date_)) %>%
+  ggplot(aes(x = week, y = avg_support, colour = candidate)) +
+  geom_line(aes(group=candidate), size = 0.3) + geom_point(size = 0.3) +
+  #scale_x_date(date_labels = "%b, %Y") + 
+  labs(y="Generic Ballot Support", x = "Week of 2022", title = "Generic Ballot Support Over 2022") +
+  scale_color_manual(values=c('blue','red')) +
+  theme_classic() +
+  geom_segment(x=("10"), xend=("10"),y=0,yend=33, lty=2, color="purple", alpha=0.4) +
+  annotate("text", x=("07"), y=("45.4"), label="Greatest gas \nprice % change", size=3) +
+  geom_segment(x=("32"), xend=("32"),y=0,yend=33, lty=2, color="purple", alpha=0.4) +
+  annotate("text", x=("30"), y=("45"), label="Greatest gas \nprice \n % decrease", size=3)
+
+
+```
+
+
+While gas prices as a shock could also be considered an economic factor, I wanted to include them in my model just to determine if they would make a difference at all. From the weekly gas price data, I used the maximum and minimum values of change in gas prices within a given year as my measurement, in order to try to capture what might be the most shocking value, or a value that could impact voter behavior. For this, maximum values are positive changes (increases) in gas prices, and minimum values are negative changes (decreases) in gas prices.
+
+```{r, warning = FALSE}
+gas <- gas %>%
+  mutate(date = mdy(date)) %>%
+  mutate(year = substr(date, 1, 4)) %>%
+  mutate(week = strftime(date, format = "%V")) %>%
+  mutate(month = strftime(date, format = "%m")) %>%
+  mutate(avg_change = 100*
+           ((avg_gasprice - lag(avg_gasprice)) / (lag(avg_gasprice))))
+
+gas$avg_change[is.na(gas$avg_change)] <- 0
+gas$year <- as.character(gas$year)
+
+aggregate(gas$avg_change, by = list(gas$year), max)
+gas2 <- aggregate(avg_change ~ year, data = gas, max)
+data.frame(gas2)
+
+colnames(gas2)[2] ="maxchange"
+
+
+gas3 <- gas %>%
+  group_by(year) %>%
+  filter(avg_change == min(avg_change)) %>%
+  select(year, avg_change)
+
+colnames(gas3)[2] ="minchange"
+
+gas3 <- gas3%>%
+  drop_na()
+
+
+gas2 <- gas2%>%
+  drop_na()
+
+gasall <- gas2 %>%
+  left_join(gas3, by=c("year"))
+
+gasall$year <- as.numeric(gasall$year)
+```
+
+```{r}
+combineddata <- read_csv("/Users/claireduncan/Downloads/combineddata.csv")
+
+dat <- combineddata %>%
+  left_join(gasall, by = c("year"))
+```
+
+However, in the model I have been using, as it’s based solely on the 2014 and 2018 midterms, there were only 2 data points that could be used for both minimum and maximum values. This is not a good model due to the severe data limitations, and it does not give a predictive value that makes sense. For the Democratic vote percent, the minimum value was noted as NA because of singularities. The maximum change variable was statistically significant, as an increase in gas prices was correlated with a -13.177% decrease in vote percent. I tried to figure out why the minimum value would not show up - but it does when I take the maximum value out of the equation. So I ended up running two models, one using the minimum and one using the maximum. The one with the minimum gave a correlation of 0.961, indicating decreases in gas prices were associated with about a percent increase in Democratic vote share.
+I also ran two models for Republican vote share, given the same problem occurred. I think this is because of the data I am using.
+For the Republican vote percent, the positive change in gas prices was correlated with a 13.177 increase in vote, inverse of the Democratic vote relationship, which was statistically significant. The correlation between Republican vote share and minimum change was -0.961, indicating that smaller gas price changes had a negative effect on voting for Republicans, which was statistically significant.
+
+```{r, warning = FALSE}
+
+D_lm_max <- lm(dem_votes_major_percent ~ maxchange + incumbency + avg_rating + turnout, data = dat)
+stargazer(D_lm_max, type='text')
+
+prob_D_lm_max <- predict(D_lm_max, newdata = 
+                           data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 1, maxchange = 13.691796), type="response", interval="predict")
+prob_D_lm_max
+
+
+D_lm_min <- lm(dem_votes_major_percent ~ minchange + incumbency + avg_rating + turnout, data = dat)
+stargazer(D_lm_min, type='text')
+
+prob_D_lm_min <- predict(D_lm_min, newdata = 
+                           data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 1, minchange =-3.6736641), type="response", interval="predict",)
+prob_D_lm_min
+
+```
+
+
+```{r, warning = FALSE}
+R_lm_max <- lm(rep_votes_major_percent ~ maxchange + incumbency + avg_rating + turnout, data = dat)
+stargazer(R_lm_max, type='text')
+
+prob_R_lm_max <- predict(R_lm_max, newdata = 
+                           data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 0, maxchange = 13.691796), type="response", interval="predict",)
+prob_R_lm_max
+
+
+R_lm_min <- lm(rep_votes_major_percent ~ minchange + incumbency + avg_rating + turnout, data = dat)
+stargazer(R_lm_min, type='text')
+
+prob_R_lm_min <- predict(R_lm_min, newdata = 
+                           data.frame(avg_rating = 3.3, turnout = 48.61, incumbency = 0, minchange =-3.6736641), interval="predict", type="response")
+prob_R_lm_min
+```
+
+Shocks are hard to predict, which my prediction model clearly demonstrated. I used the high increase value of this year in gas prices - which in March was a 13.69% change. The smallest decrease value of this year was -3.67%.
+The prediction for Democrat vote share using the gas price decrease was 52.62%. The prediction using the gas price increase was -101.67% which obviously does not make sense.
+The prediction for Republican vote share using the gas price decrease was 47.35%. The prediction for Republican vote share using the gas price increase was 201.65%, which also doesn’t make sense. I believe that the problems with the maximum increase in gas prices are due to this year’s huge shock of gas prices, and the outlier of the 13% change.
+
+
+I will not be using gas prices in my final model and will have to do more data analysis and cleaning work in order to obtain more values for my prediction model when I make my final analysis. Also for this model, I did not use a pooled model considering the focus of my project and data presentation was on gas prices and even the limitations of data within that.
+
