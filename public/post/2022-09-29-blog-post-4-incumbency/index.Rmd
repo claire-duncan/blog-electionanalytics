@@ -73,7 +73,7 @@ cd116 <- cd116 %>%
   rename("state" = "STATEFP")
 
   
-state <- read_csv("us-state.csv")
+state <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-29-blog-post-4-incumbency/us-state.csv")
 
 state <- state %>%
   rename("state" = "st")

@@ -1,0 +1,286 @@
+---
+title: Final Prediction
+author: Claire Duncan
+date: '2022-11-03'
+slug: []
+categories: []
+tags: []
+summary: The 2022 midterm election is only ONE day away! It’s time for my final prediction for the House of Representatives.
+---
+
+
+
+<pre class="r"><code>approvalBIDEN &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalBIDEN.csv&quot;)
+approvalBIDEN$pres = &quot;Biden&quot;
+approvalBIDEN$presparty = &quot;D&quot;
+
+approvalTRUMP &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalTRUMP.csv&quot;)
+approvalTRUMP$pres = &quot;Trump&quot;
+approvalTRUMP$presparty = &quot;R&quot;
+
+approvalOBAMA &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalOBAMA.csv&quot;)
+approvalOBAMA$pres = &quot;Obama&quot;
+approvalOBAMA$presparty = &quot;D&quot;
+
+approvalWBUSH &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalWBUSH.csv&quot;)
+approvalWBUSH$pres = &quot;WBush&quot;
+approvalWBUSH$presparty = &quot;R&quot;
+
+approvalCLINTON &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalCLINTON.csv&quot;)
+approvalCLINTON$pres = &quot;Clinton&quot;
+approvalCLINTON$presparty = &quot;D&quot;
+
+approvalBUSH &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalBUSH.csv&quot;)
+approvalBUSH$pres = &quot;Bush&quot;
+approvalBUSH$presparty = &quot;R&quot;
+
+approvalREAGAN &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalREAGAN.csv&quot;)
+approvalREAGAN$pres = &quot;Reagan&quot;
+approvalREAGAN$presparty = &quot;R&quot;
+
+approvalCARTER &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalCARTER.csv&quot;)
+approvalCARTER$pres = &quot;Carter&quot;
+approvalCARTER$presparty = &quot;D&quot;
+
+approvalFORD &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalFORD.csv&quot;)
+approvalFORD$pres = &quot;Ford&quot;
+approvalFORD$presparty = &quot;R&quot;
+
+approvalNIXON &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalNIXON.csv&quot;)
+approvalNIXON$pres = &quot;Nixon&quot;
+approvalNIXON$presparty = &quot;R&quot;
+
+approvalJOHNSON &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalJOHNSON.csv&quot;)
+approvalJOHNSON$pres = &quot;Johnson&quot;
+approvalJOHNSON$presparty = &quot;D&quot;
+
+approvalKENNEDY &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalKENNEDY.csv&quot;)
+approvalKENNEDY$pres = &quot;Kennedy&quot;
+approvalKENNEDY$presparty = &quot;D&quot;
+
+approvalEISENHOWER &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalEISENHOWER.csv&quot;)
+approvalEISENHOWER$pres = &quot;Eisenhower&quot;
+approvalEISENHOWER$presparty = &quot;R&quot;
+
+approvalTRUMAN &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalTRUMAN.csv&quot;)
+approvalTRUMAN$pres = &quot;Truman&quot;
+approvalTRUMAN$presparty = &quot;D&quot;
+
+approvalROOSEVELT &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalROOSEVELT.csv&quot;)
+approvalROOSEVELT$pres = &quot;Roosevelt&quot;
+approvalROOSEVELT$presparty = &quot;D&quot;
+
+approval &lt;- rbind(approvalBIDEN, approvalTRUMP, approvalOBAMA, approvalWBUSH, approvalCLINTON, approvalBUSH, approvalREAGAN, approvalCARTER, approvalFORD, approvalNIXON, approvalJOHNSON, approvalKENNEDY, approvalEISENHOWER, approvalTRUMAN, approvalROOSEVELT)
+
+colnames(approval)[2] =&quot;date&quot;
+
+approval &lt;- approval %&gt;%
+  mutate(date = mdy(date)) %&gt;%
+  mutate(year = substr(date, 1, 4)) %&gt;%
+  mutate(week = strftime(date, format = &quot;%V&quot;)) %&gt;%
+  mutate(month = strftime(date, format = &quot;%m&quot;))
+
+approval$year &lt;- as.numeric(approval$year)
+approval$week &lt;- as.numeric(approval$week)
+
+approval &lt;- approval %&gt;%
+   filter(year == 1942 | year == 1946 | year == 1950 | year == 1954 | year == 1958 | year == 1962 | year == 1966 | year == 1970 | year == 1974 | year == 1978 | year == 1982 | year == 1986 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018 | year == 2022)
+
+approval &lt;- approval %&gt;%
+  filter(week == 40 | week == 41 | week == 42 | week == 43 | week == 44 | week == 45)
+
+approval$year &lt;- as.numeric(approval$year)
+approval$week &lt;- as.numeric(approval$week)
+
+approval$avg_approval &lt;- 0
+
+
+approvalavg &lt;- by(approval$Approving, approval$year, mean)
+approvalavg</code></pre>
+<pre><code>## approval$year: 1950
+## [1] 39.5
+## ------------------------------------------------------------ 
+## approval$year: 1954
+## [1] 61
+## ------------------------------------------------------------ 
+## approval$year: 1958
+## [1] 55.5
+## ------------------------------------------------------------ 
+## approval$year: 1962
+## [1] 61
+## ------------------------------------------------------------ 
+## approval$year: 1966
+## [1] 44
+## ------------------------------------------------------------ 
+## approval$year: 1970
+## [1] 54.5
+## ------------------------------------------------------------ 
+## approval$year: 1974
+## [1] 52
+## ------------------------------------------------------------ 
+## approval$year: 1978
+## [1] 49
+## ------------------------------------------------------------ 
+## approval$year: 1982
+## [1] 42.5
+## ------------------------------------------------------------ 
+## approval$year: 1986
+## [1] 63
+## ------------------------------------------------------------ 
+## approval$year: 1990
+## [1] 57.5
+## ------------------------------------------------------------ 
+## approval$year: 1994
+## [1] 44.25
+## ------------------------------------------------------------ 
+## approval$year: 1998
+## [1] 64.75
+## ------------------------------------------------------------ 
+## approval$year: 2002
+## [1] 65.4
+## ------------------------------------------------------------ 
+## approval$year: 2006
+## [1] 37.2
+## ------------------------------------------------------------ 
+## approval$year: 2010
+## [1] 44.83333
+## ------------------------------------------------------------ 
+## approval$year: 2014
+## [1] 41.5
+## ------------------------------------------------------------ 
+## approval$year: 2018
+## [1] 41.5</code></pre>
+<pre class="r"><code>approvalavg &lt;- ddply(approval, .(year), function(x) mean(x$Approving) )
+colnames(approvalavg)[2] =&quot;pres_approval&quot;
+
+approval$year &lt;- as.character(approval$year)
+approvalavg$year &lt;- as.numeric(approvalavg$year)
+
+approvalavg</code></pre>
+<pre><code>##    year pres_approval
+## 1  1950      39.50000
+## 2  1954      61.00000
+## 3  1958      55.50000
+## 4  1962      61.00000
+## 5  1966      44.00000
+## 6  1970      54.50000
+## 7  1974      52.00000
+## 8  1978      49.00000
+## 9  1982      42.50000
+## 10 1986      63.00000
+## 11 1990      57.50000
+## 12 1994      44.25000
+## 13 1998      64.75000
+## 14 2002      65.40000
+## 15 2006      37.20000
+## 16 2010      44.83333
+## 17 2014      41.50000
+## 18 2018      41.50000</code></pre>
+<pre class="r"><code>pvdistrict_df &lt;- left_join(approvalavg, pvdistrict_df)
+
+pvdistrict_df$presdemincumb &lt;- 0
+pvdistrict_df$presrepincumb &lt;- 0
+
+pvdistrict_df &lt;- mutate(pvdistrict_df,
+        presdemincumb = case_when(
+               president_party == &quot;D&quot; ~ 1, 
+               TRUE ~ 0))
+
+pvdistrict_df &lt;- mutate(pvdistrict_df,
+        presrepincumb = case_when(
+               president_party == &quot;R&quot; ~ 1, 
+               TRUE ~ 0))</code></pre>
+<pre class="r"><code>partypower &lt;- read_csv(&quot;/Users/claireduncan/Downloads/party_power.csv&quot;)</code></pre>
+<pre><code>## Rows: 42 Columns: 5</code></pre>
+<pre><code>## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr (4): house_party_in_power_at_election, house_winner_party, pres_party_in...
+## dbl (1): Year</code></pre>
+<pre><code>## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>partypower &lt;- partypower %&gt;%
+  filter(Year == 1978 | Year == 1982 | Year == 1986 | Year == 1980 | Year == 1982 | Year == 1986 | Year == 1990 | Year == 1994 | Year == 1994 | Year == 1998 | Year == 2002 | Year == 2006 | Year == 2010 | Year == 2014 | Year == 2018)
+
+partypower$housepower &lt;- 0
+partypower$prespower &lt;- 0
+names(partypower)[names(partypower) == &quot;Year&quot;] &lt;- &quot;year&quot;
+
+partypower &lt;- partypower %&gt;%
+  mutate(housepower = case_when(
+    house_party_in_power_at_election == &quot;D&quot; ~ &quot;1&quot;, 
+    TRUE ~ &quot;0&quot;)) %&gt;%
+  mutate(prespower = case_when(
+    pres_party_in_power_at_election == &quot;D&quot; ~ &quot;1&quot;, 
+    TRUE ~ &quot;0&quot;))
+
+partyinfo &lt;- partypower %&gt;%
+  select(year, housepower, prespower)</code></pre>
+<pre class="r"><code>dist2 &lt;- dist2 %&gt;%
+  left_join(partyinfo, by = c(&#39;year&#39;))
+
+dist2$housepower &lt;- as.numeric(dist2$housepower)
+dist2$prespower &lt;- as.numeric(dist2$prespower)</code></pre>
+<pre class="r"><code>mod_D &lt;- lm(DemVotesMajorPercent ~ pres_approval + demincumb + avg_rating + Unemployed_prct, data = dist2)
+stargazer(mod_D, type = &#39;text&#39;, covariate.labels = c(&quot;Presidential Approval&quot;, &quot;Candidate Incumbency&quot;, &quot;Experts&#39; Ratings&quot;, &quot;Unemployment Rate&quot;))</code></pre>
+<pre><code>## 
+## =================================================
+##                           Dependent variable:    
+##                       ---------------------------
+##                          DemVotesMajorPercent    
+## -------------------------------------------------
+## Presidential Approval            0.078           
+##                                 (0.190)          
+##                                                  
+## Candidate Incumbency           -1.321***         
+##                                 (0.461)          
+##                                                  
+## Experts&#39; Ratings               -3.049***         
+##                                 (0.121)          
+##                                                  
+## Unemployment Rate              -0.300**          
+##                                 (0.121)          
+##                                                  
+## Constant                       60.745***         
+##                                 (7.538)          
+##                                                  
+## -------------------------------------------------
+## Observations                      329            
+## R2                               0.725           
+## Adjusted R2                      0.721           
+## Residual Std. Error        2.887 (df = 324)      
+## F Statistic            213.321*** (df = 4; 324)  
+## =================================================
+## Note:                 *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<pre class="r"><code>predDEM &lt;- predict(mod_D, housemodel22, 
+                          interval = &quot;prediction&quot;, level=0.95)
+summary(predDEM)</code></pre>
+<pre><code>##       fit             lwr             upr       
+##  Min.   :39.97   Min.   :34.11   Min.   :45.82  
+##  1st Qu.:41.51   1st Qu.:35.77   1st Qu.:47.26  
+##  Median :49.12   Median :43.35   Median :54.89  
+##  Mean   :49.45   Mean   :43.69   Mean   :55.22  
+##  3rd Qu.:58.29   3rd Qu.:52.52   3rd Qu.:64.07  
+##  Max.   :60.07   Max.   :54.29   Max.   :65.84</code></pre>
+<pre class="r"><code>subset &lt;- (predDEM &gt;= 50)
+summary(subset)</code></pre>
+<pre><code>##     fit             lwr             upr         
+##  Mode :logical   Mode :logical   Mode :logical  
+##  FALSE:228       FALSE:264       FALSE:196      
+##  TRUE :207       TRUE :171       TRUE :239</code></pre>
+<pre><code>## [1] 2.180915</code></pre>
+<pre><code>##                year   plus_margin_error plus_winner_correct 
+##        2014.0000000          10.4216856           0.4741641</code></pre>
+<pre class="r"><code>ggplot() + 
+  geom_sf(data=combdata,aes(fill=model),
+          inherit.aes=FALSE,alpha=0.9) + 
+  scale_fill_gradient(low = &quot;white&quot;, high = &quot;dodger blue&quot;, limits=c(30,65),  name = &quot;Democratic Vote Share Percentage&quot;) +
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  labs(title = &quot;Predicted Democratic Vote Share in 2022 Midterms&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>

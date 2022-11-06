@@ -48,7 +48,10 @@ polls_df <- polls_df %>%
   mutate(DEM = as.numeric(DEM), REP = as.numeric(REP))
 
 polls_df <- polls_df %>% drop_na(DEM, REP)
+```
 
+
+```{r, echo = FALSE, include = FALSE, warning = FALSE}
 cvap_district <- cvap_district %>%
   select(-c(...1, ...2, moe))
   
@@ -61,10 +64,13 @@ cvap_district <- cvap_district %>%
     TRUE ~ district
   ))
 
-
 cvap_district$district <- as.numeric(cvap_district$district)
 
+write.csv(cvap_district, "/Users/claireduncan/Downloads/cvap.csv")
+```
 
+
+```{r, echo = FALSE, include = FALSE, warning = FALSE}
 cvap <- cvap %>%
   mutate(turnout = ((DemVotes + RepVotes)/cvap)*100)
 
