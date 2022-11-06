@@ -1,0 +1,499 @@
+---
+title: Final Prediction
+author: Claire Duncan
+date: '2022-11-03'
+slug: []
+categories: []
+tags: []
+summary: The 2022 midterm election is only ONE day away! It’s time for my final prediction for the House of Representatives.
+---
+
+```{r, include = FALSE, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(ggplot2)
+library(blogdown)
+library(stargazer)
+library(readr)
+library(usmap)
+library(rmapshaper)
+library(sf)
+library(janitor)
+library(tigris)
+library(leaflet)
+library(dplyr)
+library(scales)
+library(kableExtra)
+library(cowplot)
+
+library(dotenv)
+library(jsonlite)
+library(lubridate)
+
+library(plyr)
+
+```
+
+
+```{r, include = FALSE, echo = FALSE, message = FALSE, show_col_types = FALSE}
+gb <- read_csv("/Users/claireduncan/Desktop/*gov 1347/Lab sessions/Lab Session 3 - Polling (9-22)/section data/538_generic_ballot_averages_2018-2022.csv")
+
+pvdistrict_df <- read_csv("/Users/claireduncan/Downloads/06-Ground Game (10-13)/Section data/incumb_dist_1948-2020 (3).csv")
+
+combineddata <- read_csv("/Users/claireduncan/Downloads/combineddata.csv")
+
+#cvap<- read_csv("/Users/claireduncan/Downloads/cvap.csv")
+
+unemployment <- read_csv("/Users/claireduncan/Downloads/unemployment.csv")
+
+expertrating <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-29-blog-post-4-incumbency/expert_rating.csv")
+
+```
+
+
+```{r, include = FALSE, echo = FALSE, message = FALSE}
+gb <- gb %>%
+  mutate(date_ = mdy(date)) %>%
+  mutate(year = substr(date_, 1, 4)) %>%
+  mutate(week = strftime(date_, format = "%V")) %>%
+  mutate(month = strftime(date_, format = "%m"))
+
+pvdistrict_df$demincumb <- 0
+
+pvdistrict_df <- pvdistrict_df %>%
+  mutate(demincumb = case_when(DemStatus == 'Incumbent' ~ 1, TRUE ~ 0))
+
+pvdistrict_df <- pvdistrict_df %>%
+  filter(year == 1942 | year == 1946 | year == 1950 | year == 1954 | year == 1958 | year == 1962 | year == 1966 | year == 1970 | year == 1974 | year == 1978 | year == 1982 | year == 1986 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018 | year == 2022)
+
+
+names(pvdistrict_df)[names(pvdistrict_df) == "district_num"] <- "district"
+
+pvdistrict_df$district <- as.numeric(pvdistrict_df$district)
+
+```
+
+
+```{r, include = FALSE, echo = FALSE, message = FALSE}
+expertrating <- expertrating %>%
+  select(year, state, district, avg_rating) %>%
+  mutate(district = case_when(
+    district == "AL" ~ "1",
+    TRUE ~ district
+  ))
+
+expertrating$district <- as.numeric(expertrating$district)
+```
+
+
+```{r, show_col_types =FALSE, message= FALSE}
+approvalBIDEN <- read_csv("/Users/claireduncan/Downloads/approvalBIDEN.csv")
+approvalBIDEN$pres = "Biden"
+approvalBIDEN$presparty = "D"
+
+approvalTRUMP <- read_csv("/Users/claireduncan/Downloads/approvalTRUMP.csv")
+approvalTRUMP$pres = "Trump"
+approvalTRUMP$presparty = "R"
+
+approvalOBAMA <- read_csv("/Users/claireduncan/Downloads/approvalOBAMA.csv")
+approvalOBAMA$pres = "Obama"
+approvalOBAMA$presparty = "D"
+
+approvalWBUSH <- read_csv("/Users/claireduncan/Downloads/approvalWBUSH.csv")
+approvalWBUSH$pres = "WBush"
+approvalWBUSH$presparty = "R"
+
+approvalCLINTON <- read_csv("/Users/claireduncan/Downloads/approvalCLINTON.csv")
+approvalCLINTON$pres = "Clinton"
+approvalCLINTON$presparty = "D"
+
+approvalBUSH <- read_csv("/Users/claireduncan/Downloads/approvalBUSH.csv")
+approvalBUSH$pres = "Bush"
+approvalBUSH$presparty = "R"
+
+approvalREAGAN <- read_csv("/Users/claireduncan/Downloads/approvalREAGAN.csv")
+approvalREAGAN$pres = "Reagan"
+approvalREAGAN$presparty = "R"
+
+approvalCARTER <- read_csv("/Users/claireduncan/Downloads/approvalCARTER.csv")
+approvalCARTER$pres = "Carter"
+approvalCARTER$presparty = "D"
+
+approvalFORD <- read_csv("/Users/claireduncan/Downloads/approvalFORD.csv")
+approvalFORD$pres = "Ford"
+approvalFORD$presparty = "R"
+
+approvalNIXON <- read_csv("/Users/claireduncan/Downloads/approvalNIXON.csv")
+approvalNIXON$pres = "Nixon"
+approvalNIXON$presparty = "R"
+
+approvalJOHNSON <- read_csv("/Users/claireduncan/Downloads/approvalJOHNSON.csv")
+approvalJOHNSON$pres = "Johnson"
+approvalJOHNSON$presparty = "D"
+
+approvalKENNEDY <- read_csv("/Users/claireduncan/Downloads/approvalKENNEDY.csv")
+approvalKENNEDY$pres = "Kennedy"
+approvalKENNEDY$presparty = "D"
+
+approvalEISENHOWER <- read_csv("/Users/claireduncan/Downloads/approvalEISENHOWER.csv")
+approvalEISENHOWER$pres = "Eisenhower"
+approvalEISENHOWER$presparty = "R"
+
+approvalTRUMAN <- read_csv("/Users/claireduncan/Downloads/approvalTRUMAN.csv")
+approvalTRUMAN$pres = "Truman"
+approvalTRUMAN$presparty = "D"
+
+approvalROOSEVELT <- read_csv("/Users/claireduncan/Downloads/approvalROOSEVELT.csv")
+approvalROOSEVELT$pres = "Roosevelt"
+approvalROOSEVELT$presparty = "D"
+
+approval <- rbind(approvalBIDEN, approvalTRUMP, approvalOBAMA, approvalWBUSH, approvalCLINTON, approvalBUSH, approvalREAGAN, approvalCARTER, approvalFORD, approvalNIXON, approvalJOHNSON, approvalKENNEDY, approvalEISENHOWER, approvalTRUMAN, approvalROOSEVELT)
+
+colnames(approval)[2] ="date"
+
+approval <- approval %>%
+  mutate(date = mdy(date)) %>%
+  mutate(year = substr(date, 1, 4)) %>%
+  mutate(week = strftime(date, format = "%V")) %>%
+  mutate(month = strftime(date, format = "%m"))
+
+approval$year <- as.numeric(approval$year)
+approval$week <- as.numeric(approval$week)
+
+approval <- approval %>%
+   filter(year == 1942 | year == 1946 | year == 1950 | year == 1954 | year == 1958 | year == 1962 | year == 1966 | year == 1970 | year == 1974 | year == 1978 | year == 1982 | year == 1986 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018 | year == 2022)
+
+approval <- approval %>%
+  filter(week == 40 | week == 41 | week == 42 | week == 43 | week == 44 | week == 45)
+
+approval$year <- as.numeric(approval$year)
+approval$week <- as.numeric(approval$week)
+
+approval$avg_approval <- 0
+
+
+approvalavg <- by(approval$Approving, approval$year, mean)
+approvalavg
+
+approvalavg <- ddply(approval, .(year), function(x) mean(x$Approving) )
+colnames(approvalavg)[2] ="pres_approval"
+
+approval$year <- as.character(approval$year)
+approvalavg$year <- as.numeric(approvalavg$year)
+
+approvalavg
+```
+
+```{r, message = FALSE}
+pvdistrict_df <- left_join(approvalavg, pvdistrict_df)
+
+pvdistrict_df$presdemincumb <- 0
+pvdistrict_df$presrepincumb <- 0
+
+pvdistrict_df <- mutate(pvdistrict_df,
+        presdemincumb = case_when(
+               president_party == "D" ~ 1, 
+               TRUE ~ 0))
+
+pvdistrict_df <- mutate(pvdistrict_df,
+        presrepincumb = case_when(
+               president_party == "R" ~ 1, 
+               TRUE ~ 0))
+```
+
+```{r,  show_col_types = FALSE, message = FALSE, include = FALSE}
+dist <- pvdistrict_df %>%
+  merge(expertrating, by = c("year", "state", "district"))
+
+```
+
+```{r,  show_col_types = FALSE, message = FALSE, include = FALSE}
+unemployment <- read.csv('/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-15-blog-post-2-economic-forces/unemployment_state_monthly.csv')
+
+unemployment2 <- unemployment %>%
+  select('State.and.area', 'Year', 'Month', 'Unemployed_prct')
+  
+names(unemployment2)[names(unemployment2) == "State.and.area"] <- "state"
+names(unemployment2)[names(unemployment2) == "Year"] <- "year"
+
+unemployment2$Month <- as.numeric(unemployment2$Month)
+unemployment2$year <- as.numeric(unemployment2$year)
+
+unemploymentYEAR <- unemployment2 %>%
+  filter(year == 1978 | year == 1982 | year == 1986 | year == 1980 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018)
+
+unemploymentTIME <- unemploymentYEAR %>%
+  group_by(state, year) %>%
+  filter(Month == 10)
+
+dist2 <- dist %>%
+  merge(unemploymentTIME, by = c("year", "state"))
+```
+
+
+
+```{r, show_col_types = FALSE}
+partypower <- read_csv("/Users/claireduncan/Downloads/party_power.csv")
+
+partypower <- partypower %>%
+  filter(Year == 1978 | Year == 1982 | Year == 1986 | Year == 1980 | Year == 1982 | Year == 1986 | Year == 1990 | Year == 1994 | Year == 1994 | Year == 1998 | Year == 2002 | Year == 2006 | Year == 2010 | Year == 2014 | Year == 2018)
+
+partypower$housepower <- 0
+partypower$prespower <- 0
+names(partypower)[names(partypower) == "Year"] <- "year"
+
+partypower <- partypower %>%
+  mutate(housepower = case_when(
+    house_party_in_power_at_election == "D" ~ "1", 
+    TRUE ~ "0")) %>%
+  mutate(prespower = case_when(
+    pres_party_in_power_at_election == "D" ~ "1", 
+    TRUE ~ "0"))
+
+partyinfo <- partypower %>%
+  select(year, housepower, prespower)
+```
+
+
+```{r}
+dist2 <- dist2 %>%
+  left_join(partyinfo, by = c('year'))
+
+dist2$housepower <- as.numeric(dist2$housepower)
+dist2$prespower <- as.numeric(dist2$prespower)
+
+dist2 <- dist2 %>%
+  left_join(GDP, by = c("year"))
+```
+
+```{r, warning = FALSE}
+mod_D <- lm(DemVotesMajorPercent ~ pres_approval + demincumb + avg_rating + Unemployed_prct, data = dist2)
+stargazer(mod_D, type = 'text', covariate.labels = c("Presidential Approval", "Candidate Incumbency", "Experts' Ratings", "Unemployment Rate"))
+```
+
+
+```{r, show_col_types = FALSE, message = FALSE, include = FALSE}
+housemodel22 <- read_csv("/Users/claireduncan/Downloads/HOUSEMODEL22.csv")
+
+housemodel22 <- housemodel22 %>%
+  select(state, CPR, IE, SCB, income) %>%
+  separate(state, c("stabrv", "district"))
+
+names(housemodel22)[names(housemodel22) == "income"] <- "incumb"
+
+housemodel22$demincumb <- 0
+
+housemodel22 <- housemodel22 %>%
+  mutate(demincumb = case_when(
+    incumb == "Democratic" ~ "1",
+    TRUE ~ "0"
+  ))
+```
+
+```{r, include = FALSE, message = FALSE, echo = FALSE, show_col_types = FALSE}
+state <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-10-08-blog-post-5-the-air-game/state.csv")
+names(state)[names(state) == "stusps"] <- "stabrv"
+names(state)[names(state) == "state"] <- "st"
+names(state)[names(state) == "stname"] <- "state"
+
+state <- state %>%
+  select(stabrv, state)
+
+housemodel22 <- housemodel22 %>%
+  left_join(state, by = c("stabrv"))
+
+housemodel22$district <- as.numeric(housemodel22$district)
+
+housemodel22 <- housemodel22 %>%
+  mutate(CPR = case_when(
+    CPR == "Solid Democratic" ~ 1,
+    CPR == "Likely Democratic" ~ 1.75,
+    CPR == "Lean Democratic" ~ 2.5,
+    CPR == "Tilt Democratic" ~ 3.25,
+    CPR == "Toss-up" ~ 4,
+    CPR == "Tilt Republican" ~ 4.75,
+    CPR == "Lean Republican" ~ 5.5,
+    CPR == "Likely Republican" ~ 6.25,
+    CPR == "Solid Republican" ~ 7
+  ))
+
+housemodel22 <- housemodel22 %>%
+  mutate(IE = case_when(
+    IE == "Solid Democratic" ~ 1,
+    IE == "Likely Democratic" ~ 1.75,
+    IE == "Lean Democratic" ~ 2.5,
+    IE == "Tilt Democratic" ~ 3.25,
+    IE == "Toss-up" ~ 4,
+    IE == "Tilt Republican" ~ 4.75,
+    IE == "Lean Republican" ~ 5.5,
+    IE == "Likely Republican" ~ 6.25,
+    IE == "Solid Republican" ~ 7
+  ))
+
+housemodel22 <- housemodel22 %>%
+  mutate(SCB = case_when(
+    SCB == "Safe Democratic" ~ 1,
+    SCB == "Likely Democratic" ~ 2,
+    SCB == "Lean Democratic" ~ 3,
+    SCB == "Toss-up" ~ 4,
+    SCB == "Lean Republican" ~ 5,
+    SCB == "Likely Republican" ~ 6,
+    SCB == "Safe Republican" ~ 7
+  ))
+
+housemodel22 <- housemodel22 %>%
+  mutate(avg_rating = (SCB + IE + CPR)/3)
+```
+
+```{r, show_col_types = FALSE, include = FALSE, message = FALSE}
+housemodel22$pres_approval <- 40
+
+unemploy22 <- read_csv("/Users/claireduncan/Downloads/unemploy22.csv")
+names(unemploy22)[names(unemploy22) == "...2"] <- "state"
+names(unemploy22)[names(unemploy22) == "...3"] <- "Unemployed_prct"
+
+unemploy22 <- unemploy22 %>%
+  select(state, Unemployed_prct)
+
+unemploy22 <- unemploy22[-c(1,2),]
+
+housemodel22 <- housemodel22 %>%
+  left_join(unemploy22, by = c('state'))
+  
+names(housemodel22)[names(housemodel22) == "dem_incumb"] <- "demincumb"
+
+housemodel22$demincumb <- as.numeric(housemodel22$demincumb)
+
+housemodel22$housepower <- 1
+housemodel22$prespower <- 1
+
+```
+
+```{r, show_col_types = FALSE, include = FALSE, message = FALSE}
+housemodel22 <- housemodel22 %>%
+  select(state, district, avg_rating, pres_approval, housepower, prespower, demincumb, Unemployed_prct)
+
+write_csv(housemodel22, "/Users/claireduncan/Downloads/housedata22.csv")
+```
+
+```{r, warning = FALSE, message=FALSE}
+predDEM <- predict(mod_D, housemodel22, 
+                          interval = "prediction", level=0.95)
+summary(predDEM)
+
+subset <- (predDEM >= 50)
+summary(subset)
+```
+
+
+```{r, message = FALSE, echo = FALSE}
+
+## in-sample fit
+mean(abs(mod_D$residuals))
+
+```
+
+```{r, warning = FALSE, message = FALSE, echo = FALSE}
+
+all_years <- seq(from=2010, to=2018, by=4)
+outsamp_dflist <- lapply(all_years, function(year){
+ 
+  true_D <- unique(dist2$DemVotesMajorPercent[dist2$demincumb == 1])
+  true_R <- unique(dist2$RepVotesMajorPercent[dist2$demincumb == 0])
+
+  ##fundamental model out-of-sample prediction
+  mod_basic_D_ <- lm(DemVotesMajorPercent ~ avg_rating + demincumb + Unemployed_prct, data = dist2)
+  mod_basic_R_ <- lm(RepVotesMajorPercent ~ avg_rating + demincumb + Unemployed_prct, data = dist2)
+  pred_basic_D <- predict(mod_basic_D_, dist2)
+  pred_basic_R <- predict(mod_basic_R_, dist2)
+  
+  mod_next_D_ <- lm(DemVotesMajorPercent ~ presdemincumb + avg_rating + demincumb + Unemployed_prct, data = dist2)
+  mod_next_R_ <- lm(RepVotesMajorPercent ~ presdemincumb + avg_rating + demincumb + Unemployed_prct, data = dist2)
+  pred_next_D <- predict(mod_next_D_, dist2)
+  pred_next_R <- predict(mod_next_R_, dist2)
+  
+  ##plus model out-of-sample prediction
+  
+  mod_plus_D_ <- lm(DemVotesMajorPercent ~ presdemincumb + pres_approval + avg_rating + demincumb + Unemployed_prct, data = dist2)
+  mod_plus_R_ <- lm(RepVotesMajorPercent ~ presdemincumb + pres_approval + avg_rating + demincumb + Unemployed_prct, data = dist2)
+  pred_plus_D <- predict(mod_plus_D_, dist2)
+  pred_plus_R <- predict(mod_plus_R_, dist2)
+  
+  cbind.data.frame(year,
+        basic_margin_error = (pred_basic_D-pred_basic_R) - (true_D-true_R),
+        next_margin_error = (pred_next_D-pred_next_R) - (true_D-true_R),
+        plus_margin_error = (pred_plus_D-pred_plus_R) - (true_D-true_R),
+        basic_winner_correct = (pred_basic_D > pred_basic_R) == (true_D > true_R),
+        next_winner_correct = (pred_next_D > pred_next_R) == (true_D > true_R),
+        plus_winner_correct = (pred_plus_D > pred_plus_R) == (true_D > true_R)
+  )
+})
+
+outsamp_df <- do.call(rbind, outsamp_dflist)
+colMeans(abs(outsamp_df[2:7]), na.rm=T)
+
+#outsamp_df[,c("year","econ_winner_correct","plus_winner_correct")]
+```
+
+
+```{r, show_col_types = FALSE, message = FALSE, include = FALSE}
+predDEM22 <- as.data.frame(predDEM)
+names(predDEM22)[names(predDEM22) == "fit"] <- "model"
+names(predDEM22)[names(predDEM22) == "lwr"] <- "lowermodel"
+names(predDEM22)[names(predDEM22) == "upr"] <- "uppermodel"
+
+write_csv(predDEM22, "/Users/claireduncan/Downloads/predDEM22.csv")
+```
+
+
+```{r, show_col_types = FALSE, message = FALSE, include = FALSE}
+pred22 <- read_csv("/Users/claireduncan/Downloads/pred22.csv")
+```
+
+
+```{r, show_col_types = FALSE, message = FALSE, include = FALSE}
+cd116 <- congressional_districts(
+  state = NULL,
+  cb = FALSE,
+  resolution = "500k",
+  year = 2018)
+
+statedata <- read_csv("/Users/claireduncan/Desktop/*gov 1347/blog-electionanalytics/content/post/2022-09-29-blog-post-4-incumbency/us-state.csv")
+names(cd116)[names(cd116) == "STATEFP"] <- "state"
+names(statedata)[names(statedata) == "st"] <- "state"
+
+districtdata <- cd116 %>%
+  left_join(statedata, by = c('state'))
+names(districtdata)[names(districtdata) == "state"] <- "st"
+names(districtdata)[names(districtdata) == "stname"] <- "state"
+names(districtdata)[names(districtdata) == "CD116FP"] <- "district"
+
+districtdata$district <- as.numeric(districtdata$district)
+
+districtdata <- districtdata %>%
+  mutate(district = case_when(
+    district == 0 ~ 1,
+    TRUE ~ district
+  ))
+
+combdata <- districtdata %>%
+  left_join(pred22, by = c('state', 'district')) %>%
+  filter(state != "Alaska", state != "Hawaii") %>%
+  ms_simplify()
+```
+
+
+```{r}
+ggplot() + 
+  geom_sf(data=combdata,aes(fill=model),
+          inherit.aes=FALSE,alpha=0.9) + 
+  scale_fill_gradient(low = "white", high = "dodger blue", limits=c(30,65),  name = "Democratic Vote Share Percentage") +
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  labs(title = "Predicted Democratic Vote Share in 2022 Midterms")
+```
+

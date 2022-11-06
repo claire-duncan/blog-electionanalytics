@@ -41,14 +41,9 @@ unemployment <- read_csv('unemployment_national_quarterly_final.csv')
 unemployment <- unemployment %>%
   select('year', 'quarter_cycle', 'UNRATE') %>%
   filter(year == 1982 | year == 1986 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018 | year == 2022) %>%
-  filter(quarter_cycle >= 3) %>%
-  group_by(year) %>%
-  mutate(ave_unemploy = mean(UNRATE))
+  filter(quarter_cycle == 3)
 
-unemployment <- unemployment %>%
-  select('year', 'ave_unemploy') %>%
-  unique()
-
+write.csv(unemployment, "/Users/claireduncan/Downloads/unemployment.csv")
 
 alldata <- popvote_df %>% 
     full_join(poll_df %>% 
