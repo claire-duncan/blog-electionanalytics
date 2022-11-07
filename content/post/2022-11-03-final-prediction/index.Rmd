@@ -5,9 +5,10 @@ date: '2022-11-03'
 slug: []
 categories: []
 tags: []
+summary: The 2022 midterm elections are only ONE day away! It’s time for my final prediction for the House of Representatives elections. I predict that Democrats will win 207 seats and Republicans will win 228 seats, which would result in a Republican victory in the House. With this, I predict that Democrats will win 49.45% of the two-party vote share, a tight near-tie across the country.
+
 ---
 
-The 2022 midterm elections are only ONE day away! It’s time for my final prediction for the House of Representatives elections. I predict that Democrats will win 207 seats and Republicans will win 228 seats, which would result in a Republican victory in the House. With this, I predict that Democrats will win 49.45% of the two-party vote share, a tight near-tie across the country.
 
 **Final Vote Share Prediction: 49.45% Democratic vote share (interval: 43.69% to 55.22%)**
 **Final Democratic Seat Share Prediction: 207 seats (interval: 171 seats to 239 seats)**
