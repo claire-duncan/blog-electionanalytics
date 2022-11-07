@@ -125,7 +125,7 @@ It makes sense that expert ratings are negatively correlated with Democratic vot
 An increase on the scale (meaning a race is less safe for Democrats) is correlated with a 3% decrease in Democratic vote share, which was a statistically significant finding.</p>
 <p><em>Unemployment Rate: -0.300</em>
 The economic standing of a state also has a statistically significant relationship with Democratic vote share. As the unemployment rate increases by 1%, Democratic vote share decreases by 0.3%.</p>
-<p>The adjusted R^2 for my model was 0.721, indicating that it has relatively strong predictive power. The variables can explain 72.1% of the variability in the prediction model</p>
+<p>The adjusted R^2 for my model was 0.721, indicating that it has relatively strong predictive power. The independent variables I used in my model can explain 72.1% of the variation in Democratic vote share. While this may be improved upon, it is a value that I have been getting relatively consistently with the different iterations of my model (except in some cases with ad spending!).</p>
 <pre class="r"><code>summary(predDEM)</code></pre>
 <pre><code>##       fit             lwr             upr       
 ##  Min.   :39.97   Min.   :34.11   Min.   :45.82  
@@ -148,11 +148,13 @@ The mean squared error of the model was 2.86, also indicating that my model has 
 <pre><code>## [1] 0.6841627</code></pre>
 <p><strong>Limitations</strong>
 As I’ve experienced a few times this semseter, available data proved to be a slight challenge in creating a full dataset of variables at the district level. However, I feel confident that the historical data I predicted on is a strong approximation and holds good predictive power. I also only used data from 2010-2022, which may have limited being able to create a more predictive model.</p>
-<p>Another important limitation to note is the wide interval of my prediction - Democrats winning between 171 to 239 seats means significantly different results across the board for this election. The wide interval for both seat share and vote share may be due to the more limited dataset, or the subset of midterm election years I used.</p>
+<p>Another important limitation to note is the wide interval of my prediction at , for both seat share and vote share, which may be due to the more limited dataset or the subset of midterm election years I used.</p>
+<p>The lower bound of my prediction interval has Democrats winning just 171 seats and just 43.69% of the two party vote share. The interval for the vote share is definitely very low. The seat share value would indicate a loss of 49 seats in this election. While seat share may be more variable given variability within tossup races, it is still a very low value. For context, in 2014, Republicans won a net gain of thirteen seats in the House. Democrats won 188 seats, which was seen as indicative of the strong Red Wave. For my lower bound prediction to be correct, this would be the result of a remarkable Red Wave.</p>
+<p>The upper bound of my prediction interval has Democrats winning 239 seats and 55.22% of the vote share. This is again slightly infeasible, given that Democrats currently hold 220 seats and do not seem positioned to win any more than that.</p>
 <p><strong>Conclusions</strong>
 Overall, it has been incredible to be able to predict the election - something I was very unsure I was capable of doing at the beginning of this semester!</p>
 <p>Currently, Democrats hold 220 seats in the House. With my model predicting Democrats winning 207 seats in this midterms, this would be a 13 seat loss. This is not implausible, simply given how past midterm elections have served various levels of seat losses for the incumbent President’s party.</p>
-<p>Below, find my graph of each Congressional district and the predicted Democratic vote share. Note that the scale is from 30%-70%, as I wanted to make the differences in vote share more easily perceivable.</p>
+<p>Below, find my graph of predicted Democratic vote share by Congressional district and the. Note that the scale is from 30%-70%, as I wanted to make the differences in vote share more easily perceivable.</p>
 <p>Election results will start coming in in just over 24 hours - let’s see how my model holds up!</p>
 <pre class="r"><code>ggplot() + 
   geom_sf(data=combdata,aes(fill=model),
@@ -187,7 +189,7 @@ Brown, A. (2014). Voters Don’t Care Much About Incumbency. Journal of Experime
         		<footer>
 			
 			<span>
-			&copy; <time datetime="2022-11-07 14:28:52.23565 -0500 EST m=&#43;0.361969724">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
+			&copy; <time datetime="2022-11-07 14:42:02.47759 -0500 EST m=&#43;0.295902370">2022</time> . Made with <a href='https://gohugo.io'>Hugo</a> using the <a href='https://github.com/EmielH/tale-hugo/'>Tale</a> theme.
 			</span>
 		</footer>
 
