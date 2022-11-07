@@ -1,226 +1,35 @@
 ---
-title: Final Prediction
+title: 'Final Prediction'
 author: Claire Duncan
 date: '2022-11-03'
 slug: []
 categories: []
 tags: []
-summary: The 2022 midterm election is only ONE day away! It’s time for my final prediction for the House of Representatives.
 ---
 
 
 
-<pre class="r"><code>approvalBIDEN &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalBIDEN.csv&quot;)
-approvalBIDEN$pres = &quot;Biden&quot;
-approvalBIDEN$presparty = &quot;D&quot;
-
-approvalTRUMP &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalTRUMP.csv&quot;)
-approvalTRUMP$pres = &quot;Trump&quot;
-approvalTRUMP$presparty = &quot;R&quot;
-
-approvalOBAMA &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalOBAMA.csv&quot;)
-approvalOBAMA$pres = &quot;Obama&quot;
-approvalOBAMA$presparty = &quot;D&quot;
-
-approvalWBUSH &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalWBUSH.csv&quot;)
-approvalWBUSH$pres = &quot;WBush&quot;
-approvalWBUSH$presparty = &quot;R&quot;
-
-approvalCLINTON &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalCLINTON.csv&quot;)
-approvalCLINTON$pres = &quot;Clinton&quot;
-approvalCLINTON$presparty = &quot;D&quot;
-
-approvalBUSH &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalBUSH.csv&quot;)
-approvalBUSH$pres = &quot;Bush&quot;
-approvalBUSH$presparty = &quot;R&quot;
-
-approvalREAGAN &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalREAGAN.csv&quot;)
-approvalREAGAN$pres = &quot;Reagan&quot;
-approvalREAGAN$presparty = &quot;R&quot;
-
-approvalCARTER &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalCARTER.csv&quot;)
-approvalCARTER$pres = &quot;Carter&quot;
-approvalCARTER$presparty = &quot;D&quot;
-
-approvalFORD &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalFORD.csv&quot;)
-approvalFORD$pres = &quot;Ford&quot;
-approvalFORD$presparty = &quot;R&quot;
-
-approvalNIXON &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalNIXON.csv&quot;)
-approvalNIXON$pres = &quot;Nixon&quot;
-approvalNIXON$presparty = &quot;R&quot;
-
-approvalJOHNSON &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalJOHNSON.csv&quot;)
-approvalJOHNSON$pres = &quot;Johnson&quot;
-approvalJOHNSON$presparty = &quot;D&quot;
-
-approvalKENNEDY &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalKENNEDY.csv&quot;)
-approvalKENNEDY$pres = &quot;Kennedy&quot;
-approvalKENNEDY$presparty = &quot;D&quot;
-
-approvalEISENHOWER &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalEISENHOWER.csv&quot;)
-approvalEISENHOWER$pres = &quot;Eisenhower&quot;
-approvalEISENHOWER$presparty = &quot;R&quot;
-
-approvalTRUMAN &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalTRUMAN.csv&quot;)
-approvalTRUMAN$pres = &quot;Truman&quot;
-approvalTRUMAN$presparty = &quot;D&quot;
-
-approvalROOSEVELT &lt;- read_csv(&quot;/Users/claireduncan/Downloads/approvalROOSEVELT.csv&quot;)
-approvalROOSEVELT$pres = &quot;Roosevelt&quot;
-approvalROOSEVELT$presparty = &quot;D&quot;
-
-approval &lt;- rbind(approvalBIDEN, approvalTRUMP, approvalOBAMA, approvalWBUSH, approvalCLINTON, approvalBUSH, approvalREAGAN, approvalCARTER, approvalFORD, approvalNIXON, approvalJOHNSON, approvalKENNEDY, approvalEISENHOWER, approvalTRUMAN, approvalROOSEVELT)
-
-colnames(approval)[2] =&quot;date&quot;
-
-approval &lt;- approval %&gt;%
-  mutate(date = mdy(date)) %&gt;%
-  mutate(year = substr(date, 1, 4)) %&gt;%
-  mutate(week = strftime(date, format = &quot;%V&quot;)) %&gt;%
-  mutate(month = strftime(date, format = &quot;%m&quot;))
-
-approval$year &lt;- as.numeric(approval$year)
-approval$week &lt;- as.numeric(approval$week)
-
-approval &lt;- approval %&gt;%
-   filter(year == 1942 | year == 1946 | year == 1950 | year == 1954 | year == 1958 | year == 1962 | year == 1966 | year == 1970 | year == 1974 | year == 1978 | year == 1982 | year == 1986 | year == 1982 | year == 1986 | year == 1990 | year == 1994 | year == 1994 | year == 1998 | year == 2002 | year == 2006 | year == 2010 | year == 2014 | year == 2018 | year == 2022)
-
-approval &lt;- approval %&gt;%
-  filter(week == 40 | week == 41 | week == 42 | week == 43 | week == 44 | week == 45)
-
-approval$year &lt;- as.numeric(approval$year)
-approval$week &lt;- as.numeric(approval$week)
-
-approval$avg_approval &lt;- 0
-
-
-approvalavg &lt;- by(approval$Approving, approval$year, mean)
-approvalavg</code></pre>
-<pre><code>## approval$year: 1950
-## [1] 39.5
-## ------------------------------------------------------------ 
-## approval$year: 1954
-## [1] 61
-## ------------------------------------------------------------ 
-## approval$year: 1958
-## [1] 55.5
-## ------------------------------------------------------------ 
-## approval$year: 1962
-## [1] 61
-## ------------------------------------------------------------ 
-## approval$year: 1966
-## [1] 44
-## ------------------------------------------------------------ 
-## approval$year: 1970
-## [1] 54.5
-## ------------------------------------------------------------ 
-## approval$year: 1974
-## [1] 52
-## ------------------------------------------------------------ 
-## approval$year: 1978
-## [1] 49
-## ------------------------------------------------------------ 
-## approval$year: 1982
-## [1] 42.5
-## ------------------------------------------------------------ 
-## approval$year: 1986
-## [1] 63
-## ------------------------------------------------------------ 
-## approval$year: 1990
-## [1] 57.5
-## ------------------------------------------------------------ 
-## approval$year: 1994
-## [1] 44.25
-## ------------------------------------------------------------ 
-## approval$year: 1998
-## [1] 64.75
-## ------------------------------------------------------------ 
-## approval$year: 2002
-## [1] 65.4
-## ------------------------------------------------------------ 
-## approval$year: 2006
-## [1] 37.2
-## ------------------------------------------------------------ 
-## approval$year: 2010
-## [1] 44.83333
-## ------------------------------------------------------------ 
-## approval$year: 2014
-## [1] 41.5
-## ------------------------------------------------------------ 
-## approval$year: 2018
-## [1] 41.5</code></pre>
-<pre class="r"><code>approvalavg &lt;- ddply(approval, .(year), function(x) mean(x$Approving) )
-colnames(approvalavg)[2] =&quot;pres_approval&quot;
-
-approval$year &lt;- as.character(approval$year)
-approvalavg$year &lt;- as.numeric(approvalavg$year)
-
-approvalavg</code></pre>
-<pre><code>##    year pres_approval
-## 1  1950      39.50000
-## 2  1954      61.00000
-## 3  1958      55.50000
-## 4  1962      61.00000
-## 5  1966      44.00000
-## 6  1970      54.50000
-## 7  1974      52.00000
-## 8  1978      49.00000
-## 9  1982      42.50000
-## 10 1986      63.00000
-## 11 1990      57.50000
-## 12 1994      44.25000
-## 13 1998      64.75000
-## 14 2002      65.40000
-## 15 2006      37.20000
-## 16 2010      44.83333
-## 17 2014      41.50000
-## 18 2018      41.50000</code></pre>
-<pre class="r"><code>pvdistrict_df &lt;- left_join(approvalavg, pvdistrict_df)
-
-pvdistrict_df$presdemincumb &lt;- 0
-pvdistrict_df$presrepincumb &lt;- 0
-
-pvdistrict_df &lt;- mutate(pvdistrict_df,
-        presdemincumb = case_when(
-               president_party == &quot;D&quot; ~ 1, 
-               TRUE ~ 0))
-
-pvdistrict_df &lt;- mutate(pvdistrict_df,
-        presrepincumb = case_when(
-               president_party == &quot;R&quot; ~ 1, 
-               TRUE ~ 0))</code></pre>
-<pre class="r"><code>partypower &lt;- read_csv(&quot;/Users/claireduncan/Downloads/party_power.csv&quot;)</code></pre>
-<pre><code>## Rows: 42 Columns: 5</code></pre>
-<pre><code>## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## chr (4): house_party_in_power_at_election, house_winner_party, pres_party_in...
-## dbl (1): Year</code></pre>
-<pre><code>## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>partypower &lt;- partypower %&gt;%
-  filter(Year == 1978 | Year == 1982 | Year == 1986 | Year == 1980 | Year == 1982 | Year == 1986 | Year == 1990 | Year == 1994 | Year == 1994 | Year == 1998 | Year == 2002 | Year == 2006 | Year == 2010 | Year == 2014 | Year == 2018)
-
-partypower$housepower &lt;- 0
-partypower$prespower &lt;- 0
-names(partypower)[names(partypower) == &quot;Year&quot;] &lt;- &quot;year&quot;
-
-partypower &lt;- partypower %&gt;%
-  mutate(housepower = case_when(
-    house_party_in_power_at_election == &quot;D&quot; ~ &quot;1&quot;, 
-    TRUE ~ &quot;0&quot;)) %&gt;%
-  mutate(prespower = case_when(
-    pres_party_in_power_at_election == &quot;D&quot; ~ &quot;1&quot;, 
-    TRUE ~ &quot;0&quot;))
-
-partyinfo &lt;- partypower %&gt;%
-  select(year, housepower, prespower)</code></pre>
-<pre class="r"><code>dist2 &lt;- dist2 %&gt;%
-  left_join(partyinfo, by = c(&#39;year&#39;))
-
-dist2$housepower &lt;- as.numeric(dist2$housepower)
-dist2$prespower &lt;- as.numeric(dist2$prespower)</code></pre>
+<p>The 2022 midterm elections are only ONE day away! It’s time for my final prediction for the House of Representatives elections. I predict that Democrats will win 207 seats and Republicans will win 228 seats, which would result in a Republican victory in the House. With this, I predict that Democrats will win 49.45% of the two-party vote share, a tight near-tie across the country.</p>
+<p><strong>Final Vote Share Prediction: 49.45% Democratic vote share (interval: 43.69% to 55.22%)</strong>
+<strong>Final Democratic Seat Share Prediction: 207 seats (interval: 171 seats to 239 seats)</strong></p>
+<p><strong>Model formula: Democratic Vote Share = Presidential Approval + Candidate Incumbency + Expert Ratings + Unemployment Rate</strong>
+The factors that I considered in my final model to predict Democratic vote share on the district level were: Presidential approval, expert’s ratings on the races, whether the Democratic candidate was the incumbent, and the unemployment rate during October of the election year.
+I used a multi-linear regression to model the election, weighing all the factors equally, to determine the correlation with Democratic vote share.</p>
+<p>I subset the data to predict the seat share distribution for the House. Districts with more than or equal to 50% for Democratic two-party vote were considered Democratic seats, and districts with less than 50% Democratic vote share were considered Republican seats.</p>
+<p><em>Presidential Approval Rating</em>
+After hearing from the various guests to our class, presidential approval came up repeatedly as a predictor that political scientists used to forecast elections. Midterm elections are well known for being a check on the President’s party, given that the President’s party tends to lose House seats. I chose to use Presidential approval as while it was not a variable we explored in class, I thought it would provide a good understanding of how the public perceived the president and how that may translate to potential punishment at the polls during the midterm elections. The historical data I used was compiled by The American Presidency Project from the Gallup Poll.
+For the predictive model, I used the most recent Gallup Poll survey. As of survey conducted October 3-20, Joe Biden’s approval rating was 40%
+I originally wanted to also use a Presidential power variable, but found there was too much collinearity and it messed with my model, so I stuck with Presidential approval.</p>
+<p><em>Candidate Incumbency</em>
+One interesting area of incumbency research demonstrates that while overall, incumbent parties do not do well in midterm elections, incumbent politicians actually generally do perform well. One reason for this is the power of the bully pulpit that incumbents have, as in office, politicians are able to command public attention, get name recognition, and shape public opinion in a way that challengers to office are not. However, Adam Brown’s research paper Voters Don’t Care Much About Incumbency from 2014 demonstrates that this may not actually be the case. I wanted to test this relationship by coding for individual seat level Democratic incumbency.
+For this variable, I considered whether or not the incumbent was a Democrat, given that I was predicting Democratic vote share. For historical data, I used the class-provided dataset that included a variable on Democratic incumbency.
+With the provided 2022 candidate dataset, I coded Democratic incumbency as a binary 1 or 0, with 1 indicating the candidate was an incumbent.</p>
+<p><em>Expert Ratings</em>
+From a previous blog post for this class, I found that taking the average of experts’ predictions was highly predictive of Democratic vote share - in 2018, there were only 21 instances in which the average of the experts’ ratings were wrong, compared to 412 in which they were correct. I used historical expert predictions from a Ballotpedia dataset that included predictions from Cook, Inside Elections, and Crystal Ball. They were calculated on a scale from 1-7, with 1 indicating Strong Democrat and 7 indicating Strong Republican.
+For the predictive model, I found expert ratings for every district again through Ballotpedia. The total dataset of U.S. House race ratings were last updated June 21, 2022, which may provide a limitation in my model given the latency.</p>
+<p><em>Unemployment Rate</em>
+From my earlier work in predicting vote share on economic data, I used the unemployment rate at the state level of October of the election year as an election result predictor. This followed the work of Wright (2012) which analyzed the effect of unemployment rate on the Democratic two-party vote share in Presidential and Governor elections, and found that higher unemployment increases the vote shares of Democratic candidates. I kept unemployment in my model as I found that an increase in 1% unemployment resulted in an increase in 0.08% vote share for Democrats in the midterm House election within a dataset spanning from 1976-2018.
+For predictive data for this year, statewide unemployment rates were available as of September.</p>
 <pre class="r"><code>mod_D &lt;- lm(DemVotesMajorPercent ~ pres_approval + demincumb + avg_rating + Unemployed_prct, data = dist2)
 stargazer(mod_D, type = &#39;text&#39;, covariate.labels = c(&quot;Presidential Approval&quot;, &quot;Candidate Incumbency&quot;, &quot;Experts&#39; Ratings&quot;, &quot;Unemployment Rate&quot;))</code></pre>
 <pre><code>## 
@@ -252,9 +61,18 @@ stargazer(mod_D, type = &#39;text&#39;, covariate.labels = c(&quot;Presidential 
 ## F Statistic            213.321*** (df = 4; 324)  
 ## =================================================
 ## Note:                 *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
-<pre class="r"><code>predDEM &lt;- predict(mod_D, housemodel22, 
-                          interval = &quot;prediction&quot;, level=0.95)
-summary(predDEM)</code></pre>
+<p><strong>Model Coefficients</strong>
+<em>Presidential Approval: 0.078</em>
+Stronger approval for the President in power resulted in a slightly weak positive relationship with Democratic vote share, as an increase in 1% for Presidential approval was correlated with an increase in vote share by 0.078%. This was not statistically significant.</p>
+<p><em>Candidate Incumbency (Democrats): -1.321</em>
+Democratic candidate incumbency had a significantly significant and negative relationship with vote share - a candidate being the incumbent resulted in a decrease in vote share by 1.3%.</p>
+<p><em>Experts’ Ratings: -3.049</em>
+It makes sense that expert ratings are negatively correlated with Democratic vote share, as they are ranked on a scale from 1-7 with 1 indicating a Safe Democratic race.
+An increase on the scale (meaning a race is less safe for Democrats) is correlated with a 3% decrease in Democratic vote share, which was a statistically significant finding.</p>
+<p><em>Unemployment Rate: -0.300</em>
+The economic standing of a state also has a statistically significant relationship with Democratic vote share. As the unemployment rate increases by 1%, Democratic vote share decreases by 0.3%.</p>
+<p>The adjusted R^2 for my model was 0.721, indicating that it has relatively strong predictive power. The variables can explain 72.1% of the variability in the prediction model</p>
+<pre class="r"><code>summary(predDEM)</code></pre>
 <pre><code>##       fit             lwr             upr       
 ##  Min.   :39.97   Min.   :34.11   Min.   :45.82  
 ##  1st Qu.:41.51   1st Qu.:35.77   1st Qu.:47.26  
@@ -262,19 +80,30 @@ summary(predDEM)</code></pre>
 ##  Mean   :49.45   Mean   :43.69   Mean   :55.22  
 ##  3rd Qu.:58.29   3rd Qu.:52.52   3rd Qu.:64.07  
 ##  Max.   :60.07   Max.   :54.29   Max.   :65.84</code></pre>
-<pre class="r"><code>subset &lt;- (predDEM &gt;= 50)
-summary(subset)</code></pre>
+<pre class="r"><code>summary(DemSeats)</code></pre>
 <pre><code>##     fit             lwr             upr         
 ##  Mode :logical   Mode :logical   Mode :logical  
 ##  FALSE:228       FALSE:264       FALSE:196      
 ##  TRUE :207       TRUE :171       TRUE :239</code></pre>
+<p><strong>Model Validation</strong></p>
+<p><em>In Sample</em>: The mean of the absolute value of all residuals was 2.18. Given that the closer a residual is to 0, the better the fit of the model, this indicates that my model is not a bad fit but still could be improved.
+The mean squared error of the model was 2.86, also indicating that my model has some error.</p>
 <pre><code>## [1] 2.180915</code></pre>
-<pre><code>##                year   plus_margin_error plus_winner_correct 
-##        2014.0000000          10.4216856           0.4741641</code></pre>
+<pre><code>## [1] 2.864643</code></pre>
+<p><em>Out of Sample</em>: For the out of sample evaluation, I removed 2010 data to predict on. The mean of the predicted values minus the true values for the Democratic vote share in 2010 was 0.68. This indicates that my model predicted 2010 vote share relatively well, given that the average error was approximately 0.68 percentage points.</p>
+<pre><code>## [1] 0.6841627</code></pre>
+<p><strong>Limitations</strong>
+As I’ve experienced a few times this semseter, available data proved to be a slight challenge in creating a full dataset of variables at the district level. However, I feel confident that the historical data I predicted on is a strong approximation and holds good predictive power. I also only used data from 2010-2022, which may have limited being able to create a more predictive model.</p>
+<p>Another important limitation to note is the wide interval of my prediction - Democrats winning between 171 to 239 seats means significantly different results across the board for this election. The wide interval for both seat share and vote share may be due to the more limited dataset, or the subset of midterm election years I used.</p>
+<p><strong>Conclusions</strong>
+Overall, it has been incredible to be able to predict the election - something I was very unsure I was capable of doing at the beginning of this semester!</p>
+<p>Currently, Democrats hold 220 seats in the House. With my model predicting Democrats winning 207 seats in this midterms, this would be a 13 seat loss. This is not implausible, simply given how past midterm elections have served various levels of seat losses for the incumbent President’s party.</p>
+<p>Below, find my graph of each Congressional district and the predicted Democratic vote share. Note that the scale is from 30%-70%, as I wanted to make the differences in vote share more easily perceivable.</p>
+<p>Election results will start coming in in just over 24 hours - let’s see how my model holds up!</p>
 <pre class="r"><code>ggplot() + 
   geom_sf(data=combdata,aes(fill=model),
           inherit.aes=FALSE,alpha=0.9) + 
-  scale_fill_gradient(low = &quot;white&quot;, high = &quot;dodger blue&quot;, limits=c(30,65),  name = &quot;Democratic Vote Share Percentage&quot;) +
+  scale_fill_gradient2(low = &quot;red&quot;, mid=&quot;white&quot;, high = &quot;dodger blue&quot;, limits=c(30,70), midpoint = 50, name = &quot;Democratic Vote Share Percentage&quot;) +
   theme_void() +
   theme(axis.title.x=element_blank(),
         axis.text.x=element_blank(),
@@ -283,4 +112,8 @@ summary(subset)</code></pre>
         axis.text.y=element_blank(),
         axis.ticks.y=element_blank()) +
   labs(title = &quot;Predicted Democratic Vote Share in 2022 Midterms&quot;)</code></pre>
-<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><em>References</em>
+Brown, A. (2014). Voters Don’t Care Much About Incumbency. Journal of Experimental Political Science, 1(2), 132-143. <a href="doi:10.1017/xps.2014.6" class="uri">doi:10.1017/xps.2014.6</a></p>
+<p>Wright, J. R. (2012). Unemployment and the Democratic Electoral Advantage. The American Political Science Review, 106(4), 685–702. <a href="http://www.jstor.org/stable/23357704" class="uri">http://www.jstor.org/stable/23357704</a></p>
+<p>The American Presidency Project, University of California, Santa Barbara. Presidential Job Approval dataset. <a href="https://www.presidency.ucsb.edu/statistics/data/presidential-job-approval" class="uri">https://www.presidency.ucsb.edu/statistics/data/presidential-job-approval</a></p>
