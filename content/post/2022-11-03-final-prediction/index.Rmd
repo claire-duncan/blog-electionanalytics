@@ -497,7 +497,7 @@ Below, find my graph of predicted Democratic vote share by Congressional distric
 
 Election results will start coming in in just over 24 hours - let’s see how my model holds up!
 
-```{r, message = FALSE}
+```{r, echo = FALSE, message = FALSE}
 ggplot() + 
   geom_sf(data=combdata,aes(fill=model),
           inherit.aes=FALSE,alpha=0.9) + 
