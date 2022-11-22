@@ -5,6 +5,7 @@ date: '2022-11-22'
 slug: []
 categories: []
 tags: []
+summary: It’s been two weeks since the 2022 midterms and it’s time to evaluate how well my model performed! This was a historical election on many fronts, definitely increasing the predicting challenge. The 2022 midterms did not see the subsequent “red wave” that many politicians and journalists claimed would happen as the Democratic Party kept control of the Senate and lost fewer House seats than expected.
 
 ---
 
