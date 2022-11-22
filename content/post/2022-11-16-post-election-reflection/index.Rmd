@@ -8,10 +8,10 @@ tags: []
 
 ---
 
-##Introduction
+## Introduction
 It’s been two weeks since the 2022 midterms and it’s time to evaluate how well my model performed! This was a historical election on many fronts, definitely increasing the predicting challenge. The 2022 midterms did not see the subsequent “red wave” that many politicians and journalists claimed would happen as the Democratic Party kept control of the Senate and lost fewer House seats than expected.
 
-##Recap of Model
+## Recap of Model
 I predicted that Democrats will win 207 seats and Republicans will win 228 seats, which would result in a Republican victory in the House. I predict that Democrats will win 49.45% of the two-party vote share, a tight near-tie across the country.
 
 Final Vote Share Prediction: 49.45% Democratic vote share (interval: 43.69% to 55.22%)
@@ -183,7 +183,7 @@ simpdata <- map %>%
 ```
 
 
-##Model Accuracy
+## Model Accuracy
 While all the votes are still being counted, as of November 22, 2022, the House popular vote share at the two party margin is 49.4% for Democrats. My error for the vote share using this measure was 0.05% in favor of the Democrats. Overall, Cook Political Report has the vote share margin at 47.6% for Democrats and 50.9% for Republicans, but it is not a strict two-party vote share margin.
 
 The Democrats hold 212 House of Representatives seats to the Republicans’ 219. Out of the 4 races yet to be called — CA-3, CA-13, CO-3, and AK-1 — Democrats will likely win AK-1 and Republicans will win CO-3. The two California seats are currently more contested but are leaning Republican. The map shows the two-party vote share at the district level for election results as of November 22, 2022.
@@ -296,7 +296,7 @@ sum((house22results$predictedDEMwinner - house22results$DEMwinner)^2) / nrow(hou
 ```
 
 
-##Hypotheses About Model Accuracy and Changes for Replication
+## Hypotheses About Model Accuracy and Changes for Replication
 Looking at the specifics of my model, I think that the errors I saw could be partially explained by errors also seen in expert models, especially as experts' ratings were a variable I included. FiveThirtyEight predicted that Democrats would win 205 seats and Republicans would win 230 House seats. The Economist predicted that on average, Democrats were set to win 210 seats. Given this year's elections were in many ways a deviation from the norm of midterm elections, I think that the errors here are unavoidable when making predictions build on historical data. However, in a new and improved model, I could add in weights for uncontested or solidly Dem/Rep rated races versus those that fall into the likely, lean, or toss-up categories in the ratings. I could make the contested races less reliant on the experts' prediction as those races are more variable.
 
 While I used unemployment rate during October of the election year, I think I could have instead used inflation rate or RDI, given that those economic measures were more top of mind for voters, as exit polls across the country demonstrated (https://www.cnn.com/election/2022/exit-polls/national-results/house/0). To test this, I could make another iteration of my model that just replaced unemployment rate with inflation rate or gas prices but kept the rest of the predictors the same. Then I could compare the results of the two models to see which was a better fit for the House elections.
@@ -308,6 +308,6 @@ The factor I would not change would be candidate incumbency as I do still believ
 In terms of factors I did not consider but believe turned out to be strong predictors of the election, I would include youth turnout in a new iteration of my model. Youth turnout was heavily impacted the results of the election but I did not account for in my model, given little historical precedence. It would have been difficult to build a turnout model to predict on, but perhaps I could have used weights to better decide how the vote share would be split among the age groups and incorporated demographic data. While my prediction was not built on 2020 data because it was not an election year, I could have used the demographic vote share splits (ie percentage of those aged 18-24 who voted Democratic vs Republican) and weighted that against my midterm election year data. In 2022, the vote margins for Democrats in the 18-24 age group was significant at +28, up from +24 in 2020. (https://www.brookings.edu/research/midterm-exit-polls-show-that-young-voters-drove-democratic-resistance-to-the-red-wave/)
 
 
-##Conclusion
+## Conclusion
 Overall, I am proud of how my model performed! While votes are still being counted and all results will not be finalized for a while, predicting within 0.05% of the popular vote and within 7 House seats is impressive to me. Given my uncertainty and lack of confidence especially at the beginning of the semester about whether or not I would be capable of creating a predictive model, I’ve learned so much and have definitely improved my R skills. I'm not sure if predicting elections full time is in my future but this has been a significantly meaningful project for me.
 
