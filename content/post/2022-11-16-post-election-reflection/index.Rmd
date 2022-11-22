@@ -188,6 +188,23 @@ simpdata <- map %>%
 ```
 
 
+
+```{r, echo = FALSE}
+ggplot() + 
+  geom_sf(data=simpdata,aes(fill=DemPercent),
+          inherit.aes=FALSE,alpha=0.9) + 
+  scale_fill_gradient2(low = "red", mid="white", high = "dodger blue", limits=c(0,100), midpoint = 50, name = "Democratic Vote Share Percentage") +
+  theme_void() +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank(),
+        axis.title.y=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank()) +
+  labs(title = "Actual Democratic Vote Share\n 2022 House of Representatives")
+
+```
+
 Overall in my prediction, I was off by 5 House seats. Out of all districts, I correctly predicted 422 seats, whether that meant a Democratic or Republican victory. I incorrectly predicted 12 seats. Out of those 12 incorrect seats, I predicted 9 would be Republican victories when the Democratic candidate actually won. See a representation of my incorrect seat prediction in the district level map below.
 
 
@@ -208,24 +225,6 @@ ggplot() +
 
 
 Despite the majority of my incorrect seat predictions actually being won by Democrats instead of Republicans, my model overall had a Democratic bias. In the map of my model’s vote share error for each district, it is clear that I predicted stronger Democratic vote share margins compared to the actual results. I believe this is in part because of the data I trained my model on, especially given that the 2018 midterms saw a large “blue wave.”
-
-
-```{r, echo = FALSE}
-ggplot() + 
-  geom_sf(data=simpdata,aes(fill=DemPercent),
-          inherit.aes=FALSE,alpha=0.9) + 
-  scale_fill_gradient2(low = "red", mid="white", high = "dodger blue", limits=c(0,100), midpoint = 50, name = "Democratic Vote Share Percentage") +
-  theme_void() +
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        axis.title.y=element_blank(),
-        axis.text.y=element_blank(),
-        axis.ticks.y=element_blank()) +
-  labs(title = "Actual Democratic Vote Share\n 2022 House of Representatives")
-
-```
-
 
 
 
