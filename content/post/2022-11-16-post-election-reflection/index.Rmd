@@ -5,12 +5,21 @@ date: '2022-11-22'
 slug: []
 categories: []
 tags: []
-summary: It’s been two weeks since the 2022 midterms and it’s time to evaluate how well my model performed! This was a historical election on many fronts, definitely increasing the predicting challenge. The 2022 midterms did not see the subsequent “red wave” that many politicians and journalists claimed would happen as the Democratic Party kept control of the Senate and lost fewer House seats than expected.
 
 ---
 
+**Introduction**
+It’s been two weeks since the 2022 midterms and it’s time to evaluate how well my model performed! This was a historical election on many fronts, definitely increasing the predicting challenge. The 2022 midterms did not see the subsequent “red wave” that many politicians and journalists claimed would happen as the Democratic Party kept control of the Senate and lost fewer House seats than expected.
+
 **Recap of Model**
-I predicted that Democrats would win 207 House seats in the midterm elections, with 49.45% of the two-party vote share. The factors that I considered in my final model to predict Democratic vote share on the district level were: Presidential approval, expert’s ratings on the races, whether the Democratic candidate was the incumbent, and the unemployment rate during October of the election year. I subset the data to predict the seat share distribution for the House. Districts with more than or equal to 50% for Democratic two-party vote were considered Democratic seats, and districts with less than 50% Democratic vote share were considered Republican seats.
+I predicted that Democrats will win 207 seats and Republicans will win 228 seats, which would result in a Republican victory in the House. I predict that Democrats will win 49.45% of the two-party vote share, a tight near-tie across the country.
+
+Final Vote Share Prediction: 49.45% Democratic vote share (interval: 43.69% to 55.22%)
+Final Democratic Seat Share Prediction: 207 seats (interval: 171 seats to 239 seats)
+
+The factors that I considered in my final model to predict Democratic vote share on the district level were: Presidential approval, expert’s ratings on the races, whether the Democratic candidate was the incumbent, and the unemployment rate during October of the election year. I used a multilinear regression to model the election, weighing all the factors equally.
+
+I subset the data to predict the seat share distribution for the House. Districts with more than or equal to 50% for Democratic two-party vote were considered Democratic seats, and districts with less than 50% Democratic vote share were considered Republican seats.
 
 **Model Accuracy**
 While all the votes are still being counted, as of November 22, 2022, the House popular vote share at the two party margin is 49.4% for Democrats. My error for the vote share using this measure was 0.05% in favor of the Democrats. Overall, Cook Political Report has the vote share margin at 47.6% for Democrats and 50.9% for Republicans, but it is not a strict two-party vote share margin.
