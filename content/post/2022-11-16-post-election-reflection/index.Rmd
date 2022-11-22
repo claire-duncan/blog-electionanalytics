@@ -229,9 +229,7 @@ ggplot() +
 
 
 
-Despite the majority of my incorrect seat predictions actually being won by Democrats instead of Republicans, my model overall had a Democratic bias. In the map of my model’s vote share error for each district, it is clear that I predicted stronger Democratic vote share margins compared to the actual results. I believe this is in part because of the data I trained my model on, especially given that the 2018 midterms saw a large “blue wave.”
-
-
+Despite the majority of my incorrect seat predictions actually being won by Democrats instead of Republicans, my model overall had a Democratic bias. In the map of my model’s vote share error for each district, it is clear that I predicted stronger Democratic vote share margins compared to the actual results. I believe this is in part because of the data I trained my model on, especially given that the 2018 midterms saw a large “blue wave.” For the 12 seats I incorrectly predicted, the average error in Democratic vote share percentage was -1.278, indicating that on average, I was off by a margin of 1.278 percentage points.
 
 
 ```{r, include = FALSE, echo = FALSE}
@@ -247,10 +245,14 @@ summarize(house22resultsINCORRECT, mean(difference,na.rm=TRUE))
 house22resultsuncontestedGOP <- house22results %>%
   filter(DemPercent == 0)
 
-house22resultsuncontestedGOP %>%
+house22resultsBAD2 <- house22results %>%
+  filter(difference <= -30)
+
+house22resultsBAD <- house22results %>%
+  filter(difference >= 30)
+
+house22resultsBAD %>%
   summarise(mean(prediction))
-
-
 ```
 
 
@@ -272,9 +274,12 @@ ggplot() +
 ```
 
 
-Next, I want to analyze the errors made in the actual vote share predictions at the district level. In the histogram of the errors in my predictions, there is significant range, with errors of both +40 percentage points and -40 percentage points for Democratic vote share. This is the case because in my model, I did not account for races in which there were no Democratic candidates, which is why for races in districts such as Alabama 1, there is significant error. If I were to redo my model, I would include a variable for both elections with only Republican or Independent candidates, as well as any uncontested elections in order to account for the final Democratic vote share, whether it is strongly in the direction of the Democratic candidate or not. From our results data set, there were 22 districts in which there was no Democratic candidate. I predicted that those districts would each average 41.46% of the vote share in favor of the Democrat, of which there was no candidate.
+Next, I want to analyze the errors made in the actual vote share predictions at the district level. In the histogram of the errors in my predictions, there is significant range, with errors of both +40 percentage points and -40 percentage points for Democratic vote share. This is the case because in my model, I did not account for races in which there were no Democratic candidates, which is why for races in districts such as Alabama 1, there is significant error. There were 23 districts with an error greater than -30 percentage points, of which 21 had no Democratic candidate. On average in those 23 districts, I predicted the Democratic vote share would be 41.45%, despite there being no candidate.
 
-For the 12 seats I incorrectly predicted, the average error in Democratic vote share percentage was -1.278, indicating that on average, I was off by a margin of 1.278 percentage points. 
+On the other hand, there were 5 districts in which the error was greater than +30 percentage points, all of which had Democratic vote shares greater than 90%. 
+
+If I were to redo my model, I would include a variable for both elections with only Republican or Independent candidates, as well as any uncontested elections in order to account for the final Democratic vote share, whether it is strongly in the direction of the Democratic candidate or not. 
+
 
 
 ```{r, echo = FALSE, message = FALSE}
@@ -289,7 +294,7 @@ house22results %>%
 ```
 
 
-I calculated the Brier score for the districts to assess my prediction’s accuracy. I coded Democratic victories (both my predicted ones and the actual results) as 1 and Republican victories as 0 and took the sum of the squared difference, then took the mean for every district. From that, my Brier score was 0.0298, which indicates that my model was a pretty strong and accurate predictor of the election. I do think that is in part due to the fact that I did not predict the exact probability that a Democrat would win, but just if they would win in the first place.
+I calculated the Brier score for the districts to assess my prediction’s accuracy. I coded Democratic victories (both my predicted ones and the actual results) as 1 and Republican victories as 0 and took the sum of the squared difference, then took the mean for every district. From that, my Brier score was 0.0298, which indicates that my model was a pretty strong and accurate predictor of the election. I do think that is in part due to the fact that I did not predict the exact probability that a Democrat would win, but just if they would win in the first place. However, this is still a strong indicator I was able to create a good model.
 
 
 ```{r, include = FALSE, echo = FALSE}
