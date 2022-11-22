@@ -9,7 +9,6 @@ summary: The 2022 midterm elections are only ONE day away! It’s time for my fi
 
 ---
 
-
 **Final Vote Share Prediction: 49.45% Democratic vote share (interval: 43.69% to 55.22%)**
 **Final Democratic Seat Share Prediction: 207 seats (interval: 171 seats to 239 seats)**
 
@@ -497,7 +496,7 @@ Below, find my graph of predicted Democratic vote share by Congressional distric
 
 Election results will start coming in in just over 24 hours - let’s see how my model holds up!
 
-```{r, message = FALSE}
+```{r, echo = FALSE, message = FALSE}
 ggplot() + 
   geom_sf(data=combdata,aes(fill=model),
           inherit.aes=FALSE,alpha=0.9) + 

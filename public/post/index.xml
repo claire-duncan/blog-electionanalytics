@@ -6,7 +6,16 @@
     <description>Recent content in Posts on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 03 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Post Election Reflection</title>
+      <link>http://example.org/post/2022-11-16-post-election-reflection/</link>
+      <pubDate>Tue, 22 Nov 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/2022-11-16-post-election-reflection/</guid>
+      <description>It’s been two weeks since the 2022 midterms and it’s time to evaluate how well my model performed! This was a historical election on many fronts, definitely increasing the predicting challenge. The 2022 midterms did not see the subsequent “red wave” that many politicians and journalists claimed would happen as the Democratic Party kept control of the Senate and lost fewer House seats than expected.</description>
+    </item>
+    
     <item>
       <title>Final Prediction</title>
       <link>http://example.org/post/2022-11-03-final-prediction/</link>

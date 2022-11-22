@@ -103,18 +103,6 @@ Overall, it has been incredible to be able to predict the election - something I
 <p>Currently, Democrats hold 220 seats in the House. With my model predicting Democrats winning 207 seats in this midterms, this would be a 13 seat loss. This is not implausible, simply given how past midterm elections have served various levels of seat losses for the incumbent President’s party.</p>
 <p>Below, find my graph of predicted Democratic vote share by Congressional district and the. Note that the scale is from 30%-70%, as I wanted to make the differences in vote share more easily perceivable.</p>
 <p>Election results will start coming in in just over 24 hours - let’s see how my model holds up!</p>
-<pre class="r"><code>ggplot() + 
-  geom_sf(data=combdata,aes(fill=model),
-          inherit.aes=FALSE,alpha=0.9) + 
-  scale_fill_gradient2(low = &quot;red&quot;, mid=&quot;white&quot;, high = &quot;dodger blue&quot;, limits=c(30,70), midpoint = 50, name = &quot;Democratic Vote Share Percentage&quot;) +
-  theme_void() +
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank(),
-        axis.title.y=element_blank(),
-        axis.text.y=element_blank(),
-        axis.ticks.y=element_blank()) +
-  labs(title = &quot;Predicted Democratic Vote Share in 2022 Midterms&quot;)</code></pre>
 <p><img src="{{< blogdown/postref >}}index_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <p><em>References</em>
 Brown, A. (2014). Voters Don’t Care Much About Incumbency. Journal of Experimental Political Science, 1(2), 132-143. <a href="doi:10.1017/xps.2014.6" class="uri">doi:10.1017/xps.2014.6</a></p>
