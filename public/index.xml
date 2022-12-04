@@ -6,7 +6,16 @@
     <description>Recent content on My New Hugo Site</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Tue, 22 Nov 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://example.org/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Post Election Campaign Reflection</title>
+      <link>http://example.org/post/2022-12-03-post-election-campaign-reflection/</link>
+      <pubDate>Sat, 03 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://example.org/post/2022-12-03-post-election-campaign-reflection/</guid>
+      <description>In this reflection on the Congressional race in New York&amp;rsquo;s 18th District, I will analyze why the results slightly deviated from the forecasts and compare it to similar races in the state.</description>
+    </item>
+    
     <item>
       <title>Post Election Reflection</title>
       <link>http://example.org/post/2022-11-16-post-election-reflection/</link>
