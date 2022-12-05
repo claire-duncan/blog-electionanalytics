@@ -52,8 +52,8 @@ In the newly drawn New York 18th district, there are 776,971 [residents](https:/
 In 2020, the [demographic breakdown](https://newyork.redistrictingandyou.org) of NY 18 residents was 67% white, 17.76% Hispanic, 9% Black, and 3% Asian. Comparing the two, it’s clear that redistricting NY 18 to include more of Poughkeepsie made the district more white, although it did not drastically change the other percentages of racial makeup.
 
 
-```{r, echo=FALSE, fig.align = "center"}
-knitr::include_graphics("/Users/claireduncan/Downloads/NY18.png")
+```{r echo=FALSE}
+knitr::include_graphics('/Users/claireduncan/Downloads/NY18.png')
 ```
 
 **Predictions**  
@@ -64,15 +64,16 @@ From my model, I predicted that the Democratic candidate - Pat Ryan - would win 
 Pat Ryan won 50.5% of the vote with 132,365 votes, as compared to the Republican candidate Colin Schmidtt’s 49.5% and 129,757 votes. The margin was very tight, favoring Ryan by less than 3,000 votes.
 
 In 2020, Biden won 54.2% of the vote in the counties that now make up the 18th district as compared to Trump’s 45.8%, a margin of about 8 percentage points.
-This election, Ryan’s win by just a singular percentage point does indicate a shift towards the GOP. In the New York Times’ analysis of the race, here is how the [following counties voted in this election](https://www.nytimes.com/interactive/2022/11/08/us/elections/results-new-york-us-house-district-18.html) compared to their votes in 2020:
+This election, Ryan’s win by just a singular percentage point does indicate a shift towards the GOP. In the New York Times’ analysis of the race, here is how the [following counties voted in this election](https://www.nytimes.com/interactive/2022/11/08/us/elections/results-new-york-us-house-district-18.html) compared to their votes in 2020:  
+
 Orange County: Schmitt +8; R+0.1  
 Dutchess County: Ryan +4; D+14  
 Ulster County: Ryan +17; D+20  
 
 The following graph from the NYT demonstrates the shift in vote share margin towards the Republican Party.
 
-```{r, echo=FALSE, fig.align = "center"}
-knitr::include_graphics("/Users/claireduncan/Downloads/nytanalysis.png")
+```{r echo=FALSE}
+knitr::include_graphics('/Users/claireduncan/Downloads/nytanalysis.png')
 ```
 
 
