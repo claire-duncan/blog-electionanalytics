@@ -1,12 +1,13 @@
 ---
-title: Post Election Campaign Reflection
-author: Claire Duncan
+title: "Post Election Campaign Reflection"
+author: "Claire Duncan"
 date: '2022-12-03'
 slug: []
 categories: []
 tags: []
-summary: In this reflection on the Congressional race in New York's 18th District, I will analyze why the results slightly deviated from the forecasts and compare it to similar races in the state.
-
+summary: In this reflection on the Congressional race in New York's 18th District,
+  I will analyze why the results slightly deviated from the forecasts and compare
+  it to similar races in the state.
 ---
 
 ```{r, warning = FALSE, include = FALSE, echo = FALSE, message = FALSE}
@@ -51,8 +52,9 @@ In the newly drawn New York 18th district, there are 776,971 [residents](https:/
 In 2020, the [demographic breakdown](https://newyork.redistrictingandyou.org) of NY 18 residents was 67% white, 17.76% Hispanic, 9% Black, and 3% Asian. Comparing the two, it’s clear that redistricting NY 18 to include more of Poughkeepsie made the district more white, although it did not drastically change the other percentages of racial makeup.
 
 
-![New York 18th Congressional District Map (before and after redistricting)](/Users/claireduncan/Downloads/NY18.png)
-
+```{r, echo=FALSE, fig.align = "center"}
+knitr::include_graphics("/Users/claireduncan/Downloads/NY18.png")
+```
 
 **Predictions**  
 From my model, I predicted that the Democratic candidate - Pat Ryan - would win 52.36% of the vote. In their final prediction, [FiveThirtyEight predicted](https://projects.fivethirtyeight.com/2022-election-forecast/house/new-york/18/) that Ryan was favored to win with a 71% chance. They also predicted that the popular vote for the seat would be 52% in favor of Ryan.
@@ -69,7 +71,7 @@ Ulster County: Ryan +17; D+20
 
 The following graph from the NYT demonstrates the shift in vote share margin towards the Republican Party.
 
-```{r echo=FALSE, fig.align = "center"}
+```{r, echo=FALSE, fig.align = "center"}
 knitr::include_graphics("/Users/claireduncan/Downloads/nytanalysis.png")
 ```
 
